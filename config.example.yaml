@@ -1,0 +1,107 @@
+# ================= TedaBot 配置文件（示例） =================
+# 使用方法：复制本文件为 config.yaml，填入你自己的信息
+# 注意：config.yaml 已被 .gitignore 排除，不会被提交，避免泄露密钥和群名
+
+bot:
+  # 机器人的微信昵称（用于识别群里 @机器人；留空则自动读取登录账号昵称）
+  name: "TedaBot"
+
+# ---------- AI 接口（OpenAI 兼容格式） ----------
+ai:
+  # 任意 OpenAI 兼容接口：OpenAI / DeepSeek / 本地代理 / ollama 等
+  base_url: "https://api.openai.com/v1"
+  api_key: "sk-替换为你的KEY"
+  model: "gpt-4o-mini"
+  temperature: 0.8
+  # 每个会话保留的最大对话轮数（超出淘汰最旧的）
+  max_context_rounds: 8
+  # 上下文时间边界（秒）：更早的历史消息不再带入 AI，防止误关联陈旧对话
+  context_max_age: 1800
+  # 两次 AI 请求之间的最小间隔（秒），防止频率超限
+  request_interval: 2.0
+  # API 失败重试次数与退避基数（第 n 次重试等待 retry_backoff * 2^n 秒）
+  max_retries: 3
+  retry_backoff: 1.0
+
+# ---------- 微信监听 ----------
+wechat:
+  # 轮询间隔（秒）
+  poll_interval: 1.0
+  # 消息去重时间窗（秒）：同内容消息在该窗口内只处理一次，防止 UI 重放历史消息导致重复回复
+  dedup_window: 1800
+  # 需要监听并回复的群聊名称（必须与微信中显示的群名完全一致）
+  group_whitelist:
+    - "示例群名"
+  # 需要监听的私聊好友昵称（留空列表则不监听私聊）
+  private_whitelist: []
+    # - "张三"
+
+# ---------- 触发规则 ----------
+trigger:
+  # 关键词列表：群聊中出现关键词即触发（私聊默认直接回复，不受关键词限制）
+  keywords:
+    - "@TedaBot"
+  # 是否启用模糊匹配（相近词也触发）
+  fuzzy: true
+  # 模糊匹配相似度阈值（0~1，越高要求越严格）
+  fuzzy_threshold: 0.75
+  # 群里被 @机器人 时是否回复
+  reply_on_at: true
+  # 私聊是否直接回复（不需要关键词）
+  reply_private: true
+  # 群聊回复是否在开头 @提问人（默认开启；AI 生成内容中的 @提及会被自动清除，不会出现多余 @self）
+  reply_at_sender: true
+  # 与最近回复相似度 >= 该值时自动拦截（防重复发送，0~1）
+  duplicate_threshold: 0.8
+
+# ---------- 主动互动 ----------
+proactive:
+  # 是否启用主动互动引擎
+  enabled: true
+  # 触发模式:
+  #   keyword = 只关键词/@回复，不主动发言
+  #   context = 关键词回复关闭，仅按上下文策略主动发言（@机器人仍会回复）
+  #   hybrid  = 关键词回复 + 上下文主动发言同时启用
+  mode: "hybrid"
+  # 参与上下文分析的最近群聊消息条数
+  context_window: 20
+  # 每累计多少条群消息后主动发言一次
+  message_threshold: 25
+  # 两次主动发言的最小间隔（秒），防止刷屏
+  min_interval: 300
+  # 最大间隔（秒）：超过该时间且群里有新消息时，主动冒泡一次
+  max_interval: 1800
+  # 每日 / 每周主动发言上限（重启后计数清零）
+  daily_cap: 50
+  weekly_cap: 200
+  # 生成的回复与最近聊天内容相似度超过该值则放弃发送（防重复）
+  repeat_threshold: 0.8
+
+# ---------- 角色卡 ----------
+# cards 支持两种写法：
+#   1) 内联: name + prompt
+#   2) JSON 角色卡文件: file: "xxx.json"（{{user}} 会替换为实际发送者昵称）
+roles:
+  default: "assistant"
+  cards:
+    assistant:
+      name: "通用助手"
+      prompt: "你是 {bot_name}，一个友好、简洁的中文聊天助手。回答保持简短自然，适合在微信里阅读。"
+    # 角色卡 JSON 示例见仓库中的 角色卡_病娇.json，使用方式：
+    # yandere:
+    #   file: "角色卡_病娇.json"
+
+# ---------- 安全过滤 ----------
+safety:
+  enabled: true
+  # 命中以下词的消息直接忽略，不回复
+  block_words:
+    - "示例敏感词"
+
+# ---------- 日志 ----------
+logging:
+  level: "INFO"
+  file: "logs/bot.log"
+  # 单个日志文件最大 5MB，保留 3 份滚动备份
+  max_bytes: 5242880
+  backup_count: 3
