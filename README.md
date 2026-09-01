@@ -80,8 +80,8 @@
 1. **克隆并安装依赖**
 
    ```powershell
-   git clone https://github.com/xaing404/-bot.git
-   cd -bot/teda_bot
+   git clone https://github.com/xaing404/weixin-bot.git
+   cd weixin-bot/teda_bot
    pip install -r requirements.txt
    ```
 
