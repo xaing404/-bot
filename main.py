@@ -66,27 +66,33 @@ def run_once(cfg: dict, log):
     status_interval = float((cfg.get("memory") or {}).get("status_interval", 60))
     last_refresh = 0.0
     last_status = 0.0
-    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
-        while True:
-            loop_start = time.monotonic()
-            for msg in client.poll():
-                pool.submit(_process, handler, client, engine, send_queue, msg)
-            # 检查各群是否满足主动发言条件
-            for chat in client.group_whitelist:
-                reason = engine.should_speak(chat)
-                if reason:
-                    pool.submit(_proactive_speak, engine, send_queue, handler, chat, reason)
-            # 每 30 秒检查一次是否有新打开的独立聊天窗口
-            now = time.monotonic()
-            if now - last_refresh > 30:
-                client.refresh_subwindows()
-                last_refresh = now
-            # 周期性输出场景状态监控（活跃场景 = 10 分钟内有对话的会话）
-            if now - last_status > status_interval:
-                _log_status(handler, contexts, log, send_queue)
-                last_status = now
-            # 自适应休眠：本轮 poll 耗时（如主窗口切换 1s+）不额外叠加固定间隔
-            time.sleep(max(0.1, poll_interval - (time.monotonic() - loop_start)))
+    try:
+        with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
+            while True:
+                loop_start = time.monotonic()
+                for msg in client.poll():
+                    pool.submit(_process, handler, client, engine, send_queue, msg)
+                # 检查各群是否满足主动发言条件
+                for chat in client.group_whitelist:
+                    reason = engine.should_speak(chat)
+                    if reason:
+                        pool.submit(_proactive_speak, engine, send_queue, handler, chat, reason)
+                # 每 30 秒检查一次是否有新打开的独立聊天窗口
+                now = time.monotonic()
+                if now - last_refresh > 30:
+                    client.refresh_subwindows()
+                    last_refresh = now
+                # 周期性输出场景状态监控（活跃场景 = 10 分钟内有对话的会话）
+                if now - last_status > status_interval:
+                    _log_status(handler, contexts, log, send_queue)
+                    last_status = now
+                # 自适应休眠：本轮 poll 耗时（如主窗口切换 1s+）不额外叠加固定间隔
+                time.sleep(max(0.1, poll_interval - (time.monotonic() - loop_start)))
+    finally:
+        # 退出（含 Ctrl+C）前冲刷发送队列：轮询已停止、微信窗口空闲，
+        # 正好让排队中的回复（含此前卡住未发出的）完成发送，不再丢消息
+        send_queue.wait_done(timeout=15)
+        log.info("发送队列已冲刷完成（%s）", send_queue.stats())
 
 
 def _log_status(handler: MessageHandler, contexts, log, send_queue: SendQueue = None):

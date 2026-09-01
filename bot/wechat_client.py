@@ -11,6 +11,7 @@
 
 import logging
 import re
+import threading
 import time
 from collections import deque
 from dataclasses import dataclass, field
@@ -50,6 +51,19 @@ def split_reply(text: str) -> list:
     return parts or [""]
 
 
+def chat_info_matches(info: dict, target: str) -> bool:
+    """判断 ChatInfo 返回的信息是否对应目标会话。
+
+    窗口标题可能带成员数等后缀（如 "群名 (12)"），故用包含匹配；
+    忽略空白差异，防止昵称中的空格导致误判。
+    """
+    if not info:
+        return False
+    norm = lambda s: re.sub(r"\s+", "", str(s or ""))
+    t = norm(target)
+    return any(t in norm(v) for v in info.values())
+
+
 class WeChatClient:
     """轮询配置中的群聊/私聊白名单，产出 IncomingMessage（增量去重）。"""
 
@@ -84,6 +98,11 @@ class WeChatClient:
         self._dedup = MessageDedup(window=dedup_window)
         # 多条消息连发时的条间停顿（秒）
         self._multi_delay = float(wechat_cfg.get("multi_message_delay", 1.0))
+
+        # 微信 UI 全局互斥锁：wxauto4 的窗口切换/消息读写均操作同一微信窗口，
+        # 轮询（主线程）与发送（发送队列线程）并发调用会互相卡死（UIA 竞争），
+        # 必须串行化。有独立子窗口的会话不占用主窗口，但统一加锁最稳妥。
+        self._ui_lock = threading.RLock()
 
         # 提示用户打开独立聊天窗口以避免干扰
         self._subwindows: dict = {}
@@ -121,15 +140,41 @@ class WeChatClient:
 
     # ---------- 消息拉取 ----------
 
+    def _verify_chat(self, chat, target: str) -> bool:
+        """校验当前窗口显示的会话是否为目标会话（防跨群消息归属错乱）。
+
+        主窗口模式下 ChatWith 偶发静默失败（搜索无结果/窗口未就绪），
+        此时 GetAllMessage 读到的是上一个会话的消息，若不校验会把群A的
+        消息记到群B头上，污染群B的冒泡状态（无人发言却触发冒泡）。
+        校验本身异常时降级为不校验（保可用性，正常情况下不应发生）。
+        """
+        if chat is not self.wx:  # 独立子窗口固定对应目标会话，无需校验
+            return True
+        try:
+            info = chat.ChatInfo() or {}
+        except Exception as e:
+            log.debug("ChatInfo 读取异常 [%s]: %s", target, e)
+            return True
+        if chat_info_matches(info, target):
+            return True
+        log.warning("窗口切换校验失败：当前窗口非 [%s]（读到 %s），本轮跳过读取",
+                    target, " | ".join(str(v) for v in info.values())[:60])
+        return False
+
     def poll(self) -> list:
         """轮询所有白名单会话，返回新消息列表（已按 id 去重）。"""
         out = []
         for target in self.targets:
-            chat = self._get_chat(target)
-            if chat is None:
-                continue
             try:
-                msgs = chat.GetAllMessage()
+                # UI 互斥：窗口切换 + 身份校验 + 拉取消息必须原子执行，
+                # 否则发送线程的窗口切换会插入其中，读到错误会话的消息
+                with self._ui_lock:
+                    chat = self._get_chat(target)
+                    if chat is None:
+                        continue
+                    if not self._verify_chat(chat, target):
+                        continue
+                    msgs = chat.GetAllMessage()
             except Exception as e:
                 log.error("拉取消息异常 [%s]: %s", target, e)
                 continue
@@ -177,18 +222,21 @@ class WeChatClient:
         """回复消息：按换行拆分为多条独立消息逐条发送（模拟真人连发）。
 
         独立子窗口直接发；主窗口模式带 who 定位会话。
+        全程持有 UI 互斥锁：主窗口模式下 SendMsg 内部会切换窗口，
+        与轮询并发会导致 UIA 竞争卡死（表现为消息长时间发不出去）。
         """
         parts = split_reply(text)
         chat = self._subwindows.get(chat_name)
         delay = self._multi_delay
         try:
-            for i, part in enumerate(parts):
-                if i > 0 and delay > 0:
-                    time.sleep(delay)  # 条间停顿，模拟打字节奏
-                if chat is not None:
-                    chat.SendMsg(part)
-                else:
-                    self.wx.SendMsg(part, who=chat_name)
+            with self._ui_lock:
+                for i, part in enumerate(parts):
+                    if i > 0 and delay > 0:
+                        time.sleep(delay)  # 条间停顿，模拟打字节奏
+                    if chat is not None:
+                        chat.SendMsg(part)
+                    else:
+                        self.wx.SendMsg(part, who=chat_name)
             # 登记已发送内容指纹：整条原文 + 每个拆分部分单独登记，
             # 且同时登记 bot_name 与 "self" 两种 sender 前缀（微信回报自身消息的两种形式）
             for who in {self.bot_name, "self"}:
@@ -205,7 +253,8 @@ class WeChatClient:
             if target in self._subwindows:
                 continue
             try:
-                sub = self.wx.GetSubWindow(target)
+                with self._ui_lock:
+                    sub = self.wx.GetSubWindow(target)
                 if sub is not None:
                     self._subwindows[target] = sub
                     log.info("[%s] 已绑定新打开的独立聊天窗口", target)

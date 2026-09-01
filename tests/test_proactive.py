@@ -95,6 +95,68 @@ class TestTrigger:
         assert engine.should_speak("测试群") is None  # 期间没有任何新消息
 
 
+class TestSilenceTrigger:
+    """群静默冒泡：超过 silence_interval 无成员发言时基于上下文接话。"""
+
+    def test_silence_triggers(self):
+        engine, _ = make_engine(make_cfg(message_threshold=999, silence_interval=1))
+        feed(engine, 1)
+        st = engine._state("测试群")
+        st.last_msg_ts = time.time() - 5  # 模拟已静默超过阈值
+        assert engine.should_speak("测试群") == "群静默"
+
+    def test_member_message_resets_timer(self):
+        engine, _ = make_engine(make_cfg(message_threshold=999, silence_interval=1))
+        feed(engine, 1)
+        st = engine._state("测试群")
+        st.last_msg_ts = time.time() - 5
+        engine.observe(gmsg("有人说话了"))  # 新成员消息立即重置静默计时
+        assert engine.should_speak("测试群") is None
+
+    def test_silence_disabled_when_zero(self):
+        engine, _ = make_engine(make_cfg(message_threshold=999, silence_interval=0))
+        feed(engine, 1)
+        st = engine._state("测试群")
+        st.last_msg_ts = time.time() - 999
+        assert engine.should_speak("测试群") is None
+
+    def test_silence_needs_history(self):
+        # 无任何群聊上下文可依据时不冒泡（避免无意义内容）
+        engine, _ = make_engine(make_cfg(message_threshold=999, silence_interval=0.01))
+        time.sleep(0.05)
+        assert engine.should_speak("测试群") is None
+
+    def test_rearm_after_speak(self):
+        engine, _ = make_engine(make_cfg(
+            message_threshold=999, silence_interval=1, min_interval=0))
+        feed(engine, 1)
+        st = engine._state("测试群")
+        st.last_msg_ts = time.time() - 5
+        assert engine.speak("测试群", "群静默") is not None
+        # 发言后静默计时重置，进入下一个监测周期，不会立刻再次触发
+        assert engine.should_speak("测试群") is None
+        # 继续静默满一个周期后再次允许冒泡
+        st.last_msg_ts = time.time() - 5
+        assert engine.should_speak("测试群") == "群静默"
+
+    def test_silence_respects_daily_cap(self):
+        engine, _ = make_engine(make_cfg(
+            message_threshold=999, silence_interval=1, daily_cap=1))
+        feed(engine, 1)
+        engine.speak("测试群", "群静默")
+        st = engine._state("测试群")
+        st.last_msg_ts = time.time() - 5
+        assert engine.should_speak("测试群") is None  # 每日上限已满
+
+    def test_silence_chats_independent(self):
+        engine, _ = make_engine(make_cfg(message_threshold=999, silence_interval=1))
+        feed(engine, 1, chat="群A")
+        st_a = engine._state("群A")
+        st_a.last_msg_ts = time.time() - 5
+        assert engine.should_speak("群A") == "群静默"
+        assert engine.should_speak("群B") is None  # B 群计时未到
+
+
 class TestCaps:
     def test_daily_cap(self):
         engine, _ = make_engine(make_cfg(daily_cap=1, message_threshold=1))

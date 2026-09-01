@@ -27,7 +27,7 @@ PRIORITY_PROACTIVE = 2  # 主动发言
 class SendQueue:
     """串行发送队列：submit() 入队，后台线程按优先级+FIFO 逐条发送。"""
 
-    def __init__(self, client, maxsize: int = 200):
+    def __init__(self, client, maxsize: int = 200, watchdog_interval: float = 30.0):
         self._client = client
         self._q: queue.PriorityQueue = queue.PriorityQueue(maxsize=max(1, int(maxsize)))
         self._seq = 0                    # 入队序号：同优先级保证 FIFO
@@ -36,10 +36,19 @@ class SendQueue:
         self._failed = 0
         self._dropped = 0                # 队列满被丢弃的消息数
         self._stop = threading.Event()
+        # 发送看门狗：单条消息发送超过 watchdog_interval 秒时周期性告警
+        # （曾出现主窗口模式下轮询与发送并发操作微信窗口导致发送卡死）
+        self._watchdog_interval = float(watchdog_interval)
+        self._sending_since = 0.0        # 当前这条消息开始发送的时间（0=空闲）
+        self._sending_chat = ""
         self._worker = threading.Thread(
             target=self._run, name="send-queue", daemon=True
         )
+        self._watchdog = threading.Thread(
+            target=self._watch_loop, name="send-queue-watchdog", daemon=True
+        )
         self._worker.start()
+        self._watchdog.start()
         log.info("发送队列已启动（容量%d，单线程串行发送）", self._q.maxsize)
 
     def submit(self, chat_name: str, text: str, priority: int = PRIORITY_NORMAL):
@@ -82,6 +91,8 @@ class SendQueue:
             except queue.Empty:
                 continue
             start = time.monotonic()
+            self._sending_since = start
+            self._sending_chat = chat_name
             try:
                 # client.send 内部按换行拆分逐条发送，本线程串行执行
                 # 保证同一会话（及全局）的消息按入队顺序依次发出
@@ -94,4 +105,23 @@ class SendQueue:
                 self._failed += 1
                 log.error("队列发送失败 [%s]: %s", chat_name, e)
             finally:
+                self._sending_since = 0.0
+                self._sending_chat = ""
                 self._q.task_done()
+
+    def _watch_loop(self):
+        """看门狗：单条消息发送超过阈值时周期性告警，便于发现发送卡死。"""
+        warned_at = 0.0
+        while not self._stop.is_set():
+            time.sleep(5.0)
+            if self._sending_since <= 0:
+                warned_at = 0.0
+                continue
+            elapsed = time.monotonic() - self._sending_since
+            if elapsed >= self._watchdog_interval and time.monotonic() - warned_at >= self._watchdog_interval:
+                warned_at = time.monotonic()
+                log.warning(
+                    "发送疑似卡住 [%s] 已持续 %.0fs 未完成（若频繁出现，"
+                    "请在微信中为监听群打开独立聊天窗口，并确认微信窗口未被遮挡最小化）",
+                    self._sending_chat, elapsed,
+                )

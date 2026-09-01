@@ -6,10 +6,12 @@
 3. 满足其一：
    - 距上次发言累计新群消息 >= message_threshold（跟话题走）
    - 距上次发言 >= max_interval 且期间群里有新消息（保活跃度）
+   - 群静默：超过 silence_interval 无任何成员发言时基于上下文接话；
+     任一成员发新消息立即重置静默计时（silence_interval=0 关闭）
 
 内容生成：将最近 context_window 条群聊记录（含机器人自己说的话）作为上下文，
 按角色卡生成一句贴合话题的回复；与最近聊天内容相似度过高则放弃（防重复），
-命中敏感词则丢弃。
+命中敏感词则丢弃。每次发言（含失败退避）后重新进入下一个监测周期。
 """
 
 import logging
@@ -44,6 +46,8 @@ class _ChatState:
         self.count_since_send = 0
         self.last_send_ts = 0.0
         self.next_activity_ts = 0.0  # 下次"活跃度冒泡"的最早时间
+        # 最后一次成员发言时间：群静默计时的基准（任一新消息即重置）
+        self.last_msg_ts = time.time()
 
 
 class ProactiveEngine:
@@ -55,6 +59,8 @@ class ProactiveEngine:
         self.message_threshold = max(1, int(pc.get("message_threshold", 25)))
         self.min_interval = float(pc.get("min_interval", 300))
         self.max_interval = float(pc.get("max_interval", 1800))
+        # 群静默冒泡时长（秒）：超过该时长无任何成员发言时基于上下文接话；0 = 关闭
+        self.silence_interval = float(pc.get("silence_interval", 300))
         self.daily_cap = int(pc.get("daily_cap", 50))
         self.weekly_cap = int(pc.get("weekly_cap", 200))
         self.repeat_threshold = float(pc.get("repeat_threshold", 0.8))
@@ -80,6 +86,8 @@ class ProactiveEngine:
         # 清除 @提及（如 @机器人昵称）后再入历史，防止 AI 误解析为对话对象
         st.history.append((msg.sender, strip_mentions(msg.content) or msg.content, False))
         st.count_since_send += 1
+        # 成员发言重置群静默计时，开始监测下一个静默周期
+        st.last_msg_ts = time.time()
 
     # ---------- 触发判定 ----------
 
@@ -106,7 +114,17 @@ class ProactiveEngine:
         if st.next_activity_ts and now >= st.next_activity_ts and st.count_since_send > 0:
             self._pending.add(chat_name)
             return "活跃度"
+        # 群静默冒泡：超过 silence_interval 无任何成员发言时基于上下文接话
+        if self._silence_due(st):
+            self._pending.add(chat_name)
+            return "群静默"
         return None
+
+    def _silence_due(self, st: _ChatState) -> bool:
+        """群静默判定：静默时长已到且存在可依据的上下文（无上下文不冒泡）。"""
+        if self.silence_interval <= 0 or not st.history:
+            return False
+        return time.time() - st.last_msg_ts >= self.silence_interval
 
     # ---------- 内容生成 ----------
 
@@ -185,6 +203,8 @@ class ProactiveEngine:
         st.history.append((self.bot_name, " ".join(reply.split()), True))
         st.count_since_send = 0
         st.last_send_ts = time.time()
+        # 本次发言视作新的计时基准，重新开始监测下一个静默周期（防连环刷屏）
+        st.last_msg_ts = time.time()
         # 活跃度冒泡点随机落在 [min_interval, max_interval] 区间，更像真人
         st.next_activity_ts = time.time() + random.uniform(self.min_interval, self.max_interval)
         # 与普通回复共享场景冷却计时，防止主动发言后紧跟 @回复刷屏
