@@ -4,6 +4,9 @@ config.yaml
 # 运行日志（含群聊消息记录）
 logs/
 
+# 场景记忆数据（聊天上下文，含隐私内容，不入库）
+memory/
+
 # Python 产物
 __pycache__/
 *.pyc

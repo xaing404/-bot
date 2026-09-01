@@ -8,12 +8,21 @@ class TestStripMentions:
     def test_remove_all_mentions(self):
         assert strip_mentions("@李四 来聊天 @TedaBot") == "来聊天"
 
+    def test_remove_at_xiang(self):
+        # 典型场景：@机器人昵称 + 提问，仅保留问题本身
+        assert strip_mentions("@xiang 你在干嘛") == "你在干嘛"
+        assert strip_mentions("@xiang") == ""
+
+    def test_remove_mention_with_wechat_separator(self):
+        # 微信真实 @提及 后跟特殊空格 U+2005
+        assert strip_mentions("@xiang\u2005你在干嘛") == "你在干嘛"
+
     def test_keep_plain_text(self):
         assert strip_mentions("你好呀") == "你好呀"
 
-    def test_email_also_stripped(self):
-        # 简单策略：@后跟非空白一律视为提及清除
-        assert "@" not in strip_mentions("联系我 a@b.com")
+    def test_email_preserved(self):
+        # 精准过滤：仅清除位于开头或空白后的 @提及，正文中的邮箱不受影响
+        assert strip_mentions("联系我 a@b.com") == "联系我 a@b.com"
 
     def test_empty(self):
         assert strip_mentions("") == ""

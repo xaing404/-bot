@@ -54,10 +54,54 @@ class RoleCards:
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
         card = data.get("role_card", data)  # 兼容有无外层 role_card 包裹
-        return {
-            "name": card.get("name", ""),
-            "prompt": card.get("system_prompt") or card.get("prompt", ""),
-        }
+        # 兼容中英文键名（常见角色卡导出格式）
+        prompt = (card.get("system_prompt") or card.get("prompt")
+                  or card.get("系统提示词") or card.get("系统提示") or "")
+        name = (card.get("name") or card.get("角色名称")
+                or card.get("角色名") or card.get("姓名") or "")
+        # 结构化角色卡兜底：姓名可能嵌套在"角色基本信息"里
+        if not name and isinstance(card.get("角色基本信息"), dict):
+            basic = card["角色基本信息"]
+            name = basic.get("姓名") or basic.get("name") or basic.get("角色名称") or ""
+        # 无系统提示词时，从结构化板块自动合成（防加载为空导致角色丢失）
+        if not prompt and RoleCards._is_structured(card):
+            prompt = RoleCards._compose_structured(card)
+            log.info("角色卡 [%s] 无系统提示词，已从结构化内容自动合成（%d字）", name, len(prompt))
+        return {"name": name, "prompt": prompt}
+
+    @staticmethod
+    def _is_structured(card: dict) -> bool:
+        """是否为分板块结构化角色卡（如 角色基本信息/性格特点/语言风格 等）。"""
+        keys = {"角色基本信息", "性格特点", "语言风格", "行为准则", "角色背景"}
+        return bool(keys & set(card.keys()))
+
+    @staticmethod
+    def _compose_structured(card: dict, max_chars: int = 5000) -> str:
+        """深度优先收集结构化板块的叶子字段，合成精简 system prompt。
+
+        每条叶子截断 120 字、整体不超过 max_chars，避免撑爆上下文。
+        """
+        sections = ("角色基本信息", "性格特点", "语言风格", "行为准则", "角色背景", "快速参考卡")
+        lines = []
+
+        def walk(obj, prefix: str):
+            if len(lines) >= 60:
+                return
+            if isinstance(obj, dict):
+                for k, v in obj.items():
+                    walk(v, f"{prefix}{k}: ")
+            elif isinstance(obj, list):
+                for item in obj:
+                    walk(item, prefix)
+            else:
+                text = " ".join(str(obj).split())
+                if text:
+                    lines.append(f"{prefix}{text[:120]}")
+
+        for sec in sections:
+            if sec in card:
+                walk(card[sec], f"【{sec}】")
+        return "\n".join(lines)[:max_chars]
 
     def get_card(self, name: str = None) -> dict:
         key = name or self.default

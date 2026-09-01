@@ -26,6 +26,8 @@ def make_cfg(**proactive_overrides):
     return {
         "bot": {"name": "TedaBot"},
         "ai": {"request_interval": 0},
+        # 测试中关闭场景级回复间隔，避免与主动发言冷却判定互相干扰
+        "reply_interval": {"private": 0, "group": 0},
         "trigger": {"keywords": ["小特"], "reply_on_at": True, "reply_private": True},
         "roles": {"default": "a", "cards": {"a": {"name": "助手", "prompt": "你是 {bot_name}"}}},
         "safety": {"enabled": True, "block_words": ["违规词"]},

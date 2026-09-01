@@ -10,6 +10,7 @@
 """
 
 import logging
+import re
 import time
 from collections import deque
 from dataclasses import dataclass, field
@@ -20,6 +21,19 @@ from bot.matcher import detect_at
 log = logging.getLogger("teda_bot.wechat")
 
 
+def is_self(sender: str, bot_name: str) -> bool:
+    """判断发送者是否为机器人自己。
+
+    微信（wxauto4）对自己发送的消息可能回报 sender="self"，
+    因此除规范化昵称比对外，"self" 也视为本人。
+    """
+    if (sender or "").strip().lower() == "self":
+        return True
+    norm = lambda s: re.sub(r"[\s@:：]+", "", s or "")
+    me = norm(bot_name)
+    return bool(me) and norm(sender) == me
+
+
 @dataclass
 class IncomingMessage:
     chat_name: str          # 会话名（群名或好友昵称）
@@ -28,6 +42,12 @@ class IncomingMessage:
     is_group: bool = False
     is_at: bool = False
     timestamp: float = field(default_factory=time.time)
+
+
+def split_reply(text: str) -> list:
+    """按换行把回复拆成多条独立消息；过滤空行，至少返回一条。"""
+    parts = [p.strip() for p in (text or "").splitlines() if p.strip()]
+    return parts or [""]
 
 
 class WeChatClient:
@@ -62,6 +82,8 @@ class WeChatClient:
         self._seen: dict = {t: deque(maxlen=500) for t in self.targets}
         dedup_window = float(wechat_cfg.get("dedup_window", 1800))
         self._dedup = MessageDedup(window=dedup_window)
+        # 多条消息连发时的条间停顿（秒）
+        self._multi_delay = float(wechat_cfg.get("multi_message_delay", 1.0))
 
         # 提示用户打开独立聊天窗口以避免干扰
         self._subwindows: dict = {}
@@ -140,9 +162,9 @@ class WeChatClient:
         if not content:
             return None
         sender = getattr(m, "sender", "") or ""
-        # 过滤自己发的消息（direction 或昵称双重判定）
+        # 过滤自己发的消息（direction 或昵称双重判定；昵称规范化比较防漏）
         direction = str(getattr(m, "direction", "") or "").lower()
-        if "send" in direction or sender == self.bot_name:
+        if "send" in direction or is_self(sender, self.bot_name):
             return None
         is_at = detect_at(content, self.bot_name)
         is_group = chat_name != sender  # 私聊中会话名与发送者相同
@@ -152,16 +174,28 @@ class WeChatClient:
     # ---------- 发送 ----------
 
     def send(self, chat_name: str, text: str):
-        """回复消息。独立子窗口直接发；主窗口模式带 who 定位会话。"""
+        """回复消息：按换行拆分为多条独立消息逐条发送（模拟真人连发）。
+
+        独立子窗口直接发；主窗口模式带 who 定位会话。
+        """
+        parts = split_reply(text)
         chat = self._subwindows.get(chat_name)
+        delay = self._multi_delay
         try:
-            if chat is not None:
-                chat.SendMsg(text)
-            else:
-                self.wx.SendMsg(text, who=chat_name)
-            # 登记已发送内容指纹，防止后续轮询把自己的消息当新消息处理（自环防护）
-            self._dedup.mark(f"msg:{self.bot_name}|{text}")
-            log.info("已回复 [%s]: %s", chat_name, text[:80])
+            for i, part in enumerate(parts):
+                if i > 0 and delay > 0:
+                    time.sleep(delay)  # 条间停顿，模拟打字节奏
+                if chat is not None:
+                    chat.SendMsg(part)
+                else:
+                    self.wx.SendMsg(part, who=chat_name)
+            # 登记已发送内容指纹：整条原文 + 每个拆分部分单独登记，
+            # 且同时登记 bot_name 与 "self" 两种 sender 前缀（微信回报自身消息的两种形式）
+            for who in {self.bot_name, "self"}:
+                self._dedup.mark(f"msg:{who}|{' '.join(parts)}")
+                for part in parts:
+                    self._dedup.mark(f"msg:{who}|{part}")
+            log.info("已回复 [%s]（%d条）: %s", chat_name, len(parts), text[:80])
         except Exception as e:
             log.error("发送消息失败 [%s]: %s", chat_name, e)
 

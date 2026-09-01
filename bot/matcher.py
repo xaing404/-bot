@@ -4,14 +4,23 @@ import re
 from difflib import SequenceMatcher
 
 
+# @提及：位于文本开头或空白字符之后（微信真实 @提及总是独立 token），
+# 昵称后可跟微信插入的特殊空格（U+2005/U+2006）或普通空格。
+# 正文中间的 @（如邮箱 a@b.com）不属于提及，不受影响。
+_MENTION_RE = re.compile(
+    r"(^|\s)@[^\s\u2005\u2006@，。！？、；：…—~]+[\u2005\u2006 ]*"
+)
+
+
 def strip_mentions(text: str) -> str:
-    """清除文本中的所有 @提及（如 @某人、@机器人自己）。
+    """精准清除文本中的 @提及（如 @某人、@机器人自己），保留其余内容。
 
     微信中含 @昵称 的文本发送后会变成真实 @，为避免机器人乱@人，
     AI 生成的回复统一在此清洗，@提问人 由调用方按需添加。
     """
-    cleaned = re.sub(r"@\S+", "", text or "")
-    return cleaned.strip()
+    if not text:
+        return ""
+    return _MENTION_RE.sub(r"\1", text).strip()
 
 
 def contains_keyword(text: str, keyword: str) -> bool:

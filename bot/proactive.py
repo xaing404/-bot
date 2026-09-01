@@ -47,7 +47,7 @@ class _ChatState:
 
 
 class ProactiveEngine:
-    def __init__(self, cfg: dict, handler, bot_name: str = ""):
+    def __init__(self, cfg: dict, handler, bot_name: str = "", throttle=None):
         pc = cfg.get("proactive") or {}
         mode = str(pc.get("mode", "keyword")).lower()
         self.enabled = bool(pc.get("enabled", False)) and mode in ("context", "hybrid")
@@ -60,6 +60,8 @@ class ProactiveEngine:
         self.repeat_threshold = float(pc.get("repeat_threshold", 0.8))
 
         self.handler = handler      # 复用其 ai / roles / safety / limiter
+        # 共享场景限流器：主动发言与普通回复共同遵守该群的最小回复间隔
+        self.throttle = throttle or handler.throttle
         self.bot_name = bot_name
         self._states: dict = {}
         self._pending: set = set()  # 正在生成发言的群，防止重复触发
@@ -75,7 +77,8 @@ class ProactiveEngine:
         if not self.enabled or not msg.is_group:
             return
         st = self._state(msg.chat_name)
-        st.history.append((msg.sender, msg.content, False))
+        # 清除 @提及（如 @机器人昵称）后再入历史，防止 AI 误解析为对话对象
+        st.history.append((msg.sender, strip_mentions(msg.content) or msg.content, False))
         st.count_since_send += 1
 
     # ---------- 触发判定 ----------
@@ -83,6 +86,9 @@ class ProactiveEngine:
     def should_speak(self, chat_name: str) -> str | None:
         """返回触发原因（"消息阈值"/"活跃度"）；不触发返回 None。"""
         if not self.enabled or chat_name in self._pending:
+            return None
+        # 场景级防刷屏：距该群上次回复（含@回复）不足最小间隔则不主动发言
+        if not self.throttle.allow(f"group:{chat_name}"):
             return None
         st = self._state(chat_name)
         now = time.time()
@@ -149,7 +155,7 @@ class ProactiveEngine:
             st.last_send_ts = time.time()
             return None
 
-        self._record_send(st, reply)
+        self._record_send(st, reply, chat_name)
         log.info("主动发言 [%s] 触发: %s | 每日%d/%d 周%d/%d | 内容: %s",
                  chat_name, reason, self._daily["count"], self.daily_cap,
                  self._weekly["count"], self.weekly_cap, reply[:80])
@@ -174,12 +180,16 @@ class ProactiveEngine:
                 return True
         return False
 
-    def _record_send(self, st: _ChatState, reply: str):
-        st.history.append((self.bot_name, reply, True))
+    def _record_send(self, st: _ChatState, reply: str, chat_name: str = ""):
+        # 换行折叠为空格，保持对话记录单行格式
+        st.history.append((self.bot_name, " ".join(reply.split()), True))
         st.count_since_send = 0
         st.last_send_ts = time.time()
         # 活跃度冒泡点随机落在 [min_interval, max_interval] 区间，更像真人
         st.next_activity_ts = time.time() + random.uniform(self.min_interval, self.max_interval)
+        # 与普通回复共享场景冷却计时，防止主动发言后紧跟 @回复刷屏
+        if chat_name:
+            self.throttle.mark(f"group:{chat_name}")
         self._roll_counters()
         self._daily["count"] += 1
         self._weekly["count"] += 1

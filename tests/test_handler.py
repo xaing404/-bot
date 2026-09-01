@@ -23,6 +23,8 @@ def cfg():
     return {
         "bot": {"name": "TedaBot"},
         "ai": {"request_interval": 0, "max_context_rounds": 4},
+        # 测试中关闭场景级回复间隔，避免连续 handle 被冷却拦截
+        "reply_interval": {"private": 0, "group": 0},
         "trigger": {
             "keywords": ["小特"],
             "fuzzy": True,
@@ -68,7 +70,7 @@ class TestTrigger:
         reply = h.handle(msg("小特你好"))
         assert reply == "@张三 你好呀"  # 只保留 @提问人
         # 上下文中存的是不带 @ 的纯文本，避免 AI 模仿
-        history = h.contexts.get("测试群").snapshot()
+        history = h.contexts.get("group:测试群").snapshot()
         assert "@" not in history[-1]["content"]
 
     def test_mention_only_reply_dropped(self, cfg):
@@ -125,7 +127,7 @@ class TestContextFlow:
         h = MessageHandler(cfg, ai, contexts)
         h.handle(msg("小特，第一句话"))
         # 把第一条历史时间戳改旧，模拟陈旧对话
-        ctx = contexts.get("测试群")
+        ctx = contexts.get("group:测试群")
         ctx._messages[0]["ts"] -= 9999
         h.handle(msg("小特，第二句话，完全不同"))
         # 带入 AI 的历史中不应包含过期消息
