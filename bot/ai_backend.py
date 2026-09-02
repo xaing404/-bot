@@ -6,9 +6,75 @@
 import logging
 import threading
 import time
+import uuid
 from collections import deque
 
+from bot.logger import log_task, log_success
+
 log = logging.getLogger("teda_bot.ai")
+
+# 思考内容清洗：去除 <think>/<thinking>/<reasoning> 等标签块，只保留最终回答
+import re
+
+_THINK_TAG_RE = re.compile(
+    r"<\s*(think|thinking|reasoning|thought)\s*>.*?<\s*/\s*\1\s*>",
+    re.IGNORECASE | re.DOTALL,
+)
+# 未闭合的思考标签：从开标签起到文本末尾全部丢弃
+_UNCLOSED_THINK_RE = re.compile(
+    r"<\s*(think|thinking|reasoning|thought)\s*>.*\Z",
+    re.IGNORECASE | re.DOTALL,
+)
+# 残留的孤立思考标签（如 "</think>" 单独成段）
+_ORPHAN_THINK_TAG_RE = re.compile(
+    r"</?\s*(think|thinking|reasoning|thought)\s*>",
+    re.IGNORECASE,
+)
+
+# 散文式思考内容（无标签、纯文本 CoT）特征短语，均针对"模型以第三人称
+# 分析请求"的典型口吻；正常聊天回复几乎不会同时命中 2 项及以上
+_COT_INDICATOR_RE = [
+    re.compile(r"用户(突然|给出|发来|提供|可能|是在|想要|需要|问|提到|输入)", re.DOTALL),
+    re.compile(r"(我|我得|我现在?)(需要|要)(处理|分析|确定|考虑|判断|回[回应复]|确保|仔细)", re.DOTALL),
+    re.compile(r"首先[，,].{0,24}(我|需|要|得|让)", re.DOTALL),
+    re.compile(r"(让我|我们来|先来)(分析|看看|梳理|理清)", re.DOTALL),
+    re.compile(r"根据(设定|角色|人设|用户|以上|上述|上下文|规则)", re.DOTALL),
+    re.compile(r"(角色|人设)设定|符合(人设|角色|规则|要求)", re.DOTALL),
+    re.compile(r"其次[，,]|最后[，,].{0,12}(确保|注意|检查)", re.DOTALL),
+    re.compile(r"看起来像是?(一个|一道)", re.DOTALL),
+    re.compile(r"(这个|这道)(问题|题目|请求)", re.DOTALL),
+    re.compile(r"(分析|思考)(一下|一下当前|当前|当前对话)", re.DOTALL),
+    re.compile(r"(检查|确认)(是否|一下)", re.DOTALL),
+]
+
+
+def looks_like_cot(text: str) -> bool:
+    """判断文本是否疑似散文式思考过程（无标签纯文本 CoT）。
+
+    规则：命中 >=2 个不同特征短语即判定；仅命中 1 个时若以典型 CoT
+    开头（如 "嗯，用户…"、"好的，现在需要…"）且文本较长也判定。
+    """
+    if not text:
+        return False
+    hits = sum(1 for rx in _COT_INDICATOR_RE if rx.search(text))
+    if hits >= 2:
+        return True
+    if hits == 1 and len(text) >= 60 and re.match(
+        r"^(嗯|好的|好[的呀吧]|那|这|看来|收到|明白了?)[，,]?\s*(用户|现在|接下来|让我|首先|我)",
+        text,
+    ):
+        return True
+    return False
+
+
+def strip_thinking(text: str) -> str:
+    """清洗模型输出中的思考过程，仅保留最终回答。"""
+    if not text:
+        return text or ""
+    text = _THINK_TAG_RE.sub("", text)
+    text = _UNCLOSED_THINK_RE.sub("", text)
+    text = _ORPHAN_THINK_TAG_RE.sub("", text)
+    return text.strip()
 
 
 class AIBackendError(Exception):
@@ -115,6 +181,8 @@ class AIBackend:
         self.max_retries = int(cfg.get("max_retries", 2))
         self.retry_backoff = float(cfg.get("retry_backoff", 1.0))
         self.timeout = float(cfg.get("timeout") or 30)
+        # 是否禁用思考模式（默认禁用，防止 CoT 内容被当成回复发出）
+        self.disable_thinking = bool(cfg.get("disable_thinking", True))
         self.client = OpenAI(
             api_key=cfg.get("api_key", ""),
             base_url=cfg.get("base_url", "https://api.openai.com/v1"),
@@ -122,11 +190,35 @@ class AIBackend:
             max_retries=1,             # SDK 层网络重试仅 1 次，避免与应用层重试叠加
         )
 
+    def _build_extra_body(self) -> dict:
+        """构造禁用思考模式的多协议参数，兼容主流 OpenAI 兼容后端。
+
+        不同后端识别不同字段，全部带上后端会忽略不认识的字段：
+        - Qwen3 / GLM / vLLM/SGLang: enable_thinking / chat_template_kwargs
+        - GLM-4.5+ / 智谱: thinking.type = disabled
+        - OpenAI o 系列 / GPT-5: reasoning_effort = none/minimal
+        - DeepSeek: 不支持关闭，靠响应层清洗
+        """
+        if not self.disable_thinking:
+            return {}
+        return {
+            "enable_thinking": False,               # vLLM/SGLang/DashScope
+            "thinking": {"type": "disabled"},       # 智谱 GLM / Anthropic 风格
+            "chat_template_kwargs": {"enable_thinking": False},  # Qwen3 vLLM/SGLang
+            "reasoning_effort": "none",             # OpenAI o/gpt-5 系列（旧版用 minimal）
+            "reasoning": {"exclude": True},         # OpenRouter
+        }
+
     def chat(self, system_prompt: str, history: list, user_msg: str) -> str:
         """调用 AI 生成回复。失败按指数退避重试，重试耗尽抛出 AIBackendError。"""
+        task_id = uuid.uuid4().hex[:8]
+        log_task(log, task_id, "模型生成任务开始 | 模型=%s | 输入%d条历史消息",
+                 self.model, len(history) + 2)
+        start_ts = time.monotonic()
         messages = [{"role": "system", "content": system_prompt}]
         messages.extend(history)
         messages.append({"role": "user", "content": user_msg})
+        extra_body = self._build_extra_body()
 
         last_err = None
         for attempt in range(self.max_retries):
@@ -135,12 +227,30 @@ class AIBackend:
                     model=self.model,
                     messages=messages,
                     temperature=self.temperature,
+                    extra_body=extra_body or None,
                 )
-                return resp.choices[0].message.content or ""
+                content = resp.choices[0].message.content or ""
+                cleaned = strip_thinking(content)
+                if cleaned != content.strip():
+                    log.info("已清洗回复中的思考标签（清洗前 %d 字 → 清洗后 %d 字）",
+                             len(content), len(cleaned))
+                if not cleaned and content:
+                    # 整段均为标签思考内容，视为失败触发重试
+                    log.warning("回复经标签清洗后为空（整段均为思考内容），重试")
+                    raise ValueError("empty after thinking-strip")
+                if cleaned and looks_like_cot(cleaned):
+                    # auto 路由可能命中带思考模式的源，输出无标签纯文本 CoT；
+                    # 视为失败触发重试，确保思考内容绝不发出
+                    log_task(log, task_id, "检测到思考内容，第%d次尝试作废并重试", attempt + 1)
+                    raise ValueError("prose thinking detected")
+                log_success(log, "[任务%s] 模型生成完成 | 耗时%.1fs | 输出%d字",
+                            task_id, time.monotonic() - start_ts, len(cleaned))
+                return cleaned
             except Exception as e:  # 网络/接口异常统一退避重试
                 last_err = e
                 delay = self.retry_backoff * (2 ** attempt)
                 log.warning("AI 请求失败(第%d次): %s，%.1fs 后重试", attempt + 1, e, delay)
                 if attempt < self.max_retries - 1:
                     time.sleep(delay)
+        log_task(log, task_id, "模型生成任务失败（已重试%d次）", self.max_retries)
         raise AIBackendError(f"AI 调用失败（已重试{self.max_retries}次）: {last_err}")

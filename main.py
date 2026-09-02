@@ -56,6 +56,21 @@ def run_once(cfg: dict, log):
     from bot.proactive import ProactiveEngine
     engine = ProactiveEngine(cfg, handler, client.bot_name, throttle=throttle)
 
+    # Dashboard Web 管理后台（可选，默认关闭）：在守护线程中运行 Flask，
+    # 不影响消息轮询主循环；所有 API 只读访问运行时组件
+    dash_cfg = cfg.get("dashboard") or {}
+    if dash_cfg.get("enabled", False):
+        from dashboard.server import DashboardServer
+        dash = DashboardServer(
+            cfg,
+            send_queue=send_queue,
+            contexts=contexts,
+            handler=handler,
+            store=store,
+            engine=engine,
+        )
+        dash.start()
+
     targets = client.group_whitelist + client.private_whitelist
     log.info("机器人启动完成，正在监听: %s（角色: %s，主动互动: %s，记忆持久化: %s）",
              targets, handler.roles.default,

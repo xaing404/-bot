@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日志监控</title>
+    <style id="theme-vars">
+/* ============================================================
+   TedaBot Dashboard — "Anodized Deep" Color & Type System
+   Inspired by Linear / Raycast dark dashboard aesthetics
+   Single brand hue: Indigo #5e6ad2
+   ============================================================ */
+
+/* ---- Design Tokens (Dark = Default) ---- */
+:root {
+  /* Surface ladder — 4-step dark gradient */
+  --tb-canvas: #08090a;
+  --tb-surface: #0d0d0f;
+  --tb-surface-elevated: #121214;
+  --tb-surface-card: #161619;
+
+  /* Hairlines */
+  --tb-hairline: #24272b;
+  --tb-hairline-soft: rgba(255, 255, 255, 0.06);
+  --tb-hairline-strong: rgba(255, 255, 255, 0.10);
+
+  /* Text */
+  --tb-ink: #f4f4f6;
+  --tb-body: #cdced4;
+  --tb-mute: #8a8f98;
+  --tb-ash: #5c6166;
+
+  /* Brand — single hue: Indigo */
+  --tb-primary: #5e6ad2;
+  --tb-primary-hover: #6d7ade;
+  --tb-primary-deep: #4c54b8;
+  --tb-primary-glow: rgba(94, 106, 210, 0.12);
+  --tb-primary-soft: rgba(94, 106, 210, 0.18);
+  --tb-primary-foreground: #ffffff;
+
+  /* State colors — semantic only */
+  --tb-success: #59d499;
+  --tb-success-soft: rgba(89, 212, 153, 0.12);
+  --tb-warning: #ffc533;
+  --tb-warning-soft: rgba(255, 197, 51, 0.12);
+  --tb-error: #ff6161;
+  --tb-error-soft: rgba(255, 97, 97, 0.12);
+  --tb-info: #57c1ff;
+  --tb-info-soft: rgba(87, 193, 255, 0.12);
+
+  /* Radius scale */
+  --tb-radius-small: 4px;
+  --tb-radius-medium: 8px;
+  --tb-radius-large: 16px;
+  --tb-radius-full: 9999px;
+
+  /* Shadows — floating layers only */
+  --tb-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.24), 0 1px 1px rgba(0, 0, 0, 0.12);
+  --tb-shadow-2: 0 8px 24px -8px rgba(0, 0, 0, 0.48);
+  --tb-shadow-3: 0 24px 60px -20px rgba(0, 0, 0, 0.64);
+
+  /* ---- Semantic Aliases (required by head contract) ---- */
+  --tb-background: var(--tb-canvas);
+  --tb-foreground: var(--tb-ink);
+  --tb-card: var(--tb-surface);
+  --tb-card-foreground: var(--tb-ink);
+  --tb-popover: var(--tb-surface-elevated);
+  --tb-popover-foreground: var(--tb-ink);
+  --tb-muted: var(--tb-surface-elevated);
+  --tb-muted-foreground: var(--tb-mute);
+  --tb-border: var(--tb-hairline);
+  --tb-input: var(--tb-hairline);
+  --tb-ring: #5e6ad2;
+
+  /* Typography */
+  --tb-font-sans: "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --tb-font-mono: "JetBrains Mono", "Geist Mono", "Berkeley Mono", ui-monospace, monospace;
+
+  /* ---- Raw token mirrors for @theme inline ---- */
+  --color-background: #08090a;
+  --color-foreground: #f4f4f6;
+  --color-card: #0d0d0f;
+  --color-card-foreground: #f4f4f6;
+  --color-popover: #121214;
+  --color-popover-foreground: #f4f4f6;
+  --color-primary: #5e6ad2;
+  --color-primary-foreground: #ffffff;
+  --color-muted: #121214;
+  --color-muted-foreground: #8a8f98;
+  --color-border: #24272b;
+  --color-input: #24272b;
+  --color-ring: #5e6ad2;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+}
+
+/* ---- Light mode (optional, not primary) ---- */
+.light {
+  --tb-canvas: #fafafa;
+  --tb-surface: #ffffff;
+  --tb-surface-elevated: #f4f4f5;
+  --tb-surface-card: #ebebed;
+  --tb-hairline: #e4e4e7;
+  --tb-hairline-soft: rgba(0, 0, 0, 0.04);
+  --tb-hairline-strong: rgba(0, 0, 0, 0.08);
+  --tb-ink: #18181b;
+  --tb-body: #3f3f46;
+  --tb-mute: #71717a;
+  --tb-ash: #a1a1aa;
+  --tb-primary: #5e6ad2;
+  --tb-primary-hover: #4c54b8;
+  --tb-primary-deep: #3d44a0;
+  --tb-primary-glow: rgba(94, 106, 210, 0.08);
+  --tb-primary-soft: rgba(94, 106, 210, 0.10);
+  --tb-background: var(--tb-canvas);
+  --tb-foreground: var(--tb-ink);
+  --tb-card: var(--tb-surface);
+  --tb-card-foreground: var(--tb-ink);
+  --tb-popover: var(--tb-surface);
+  --tb-popover-foreground: var(--tb-ink);
+  --tb-muted: var(--tb-surface-elevated);
+  --tb-muted-foreground: var(--tb-mute);
+  --tb-border: var(--tb-hairline);
+  --tb-input: var(--tb-hairline);
+  --tb-ring: #5e6ad2;
+  --color-background: #fafafa;
+  --color-foreground: #18181b;
+  --color-card: #ffffff;
+  --color-card-foreground: #18181b;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #18181b;
+  --color-muted: #f4f4f5;
+  --color-muted-foreground: #71717a;
+  --color-border: #e4e4e7;
+  --color-input: #e4e4e7;
+}
+
+/* ---- Typography Classes ---- */
+.font-sans { font-family: var(--tb-font-sans); }
+.font-mono { font-family: var(--tb-font-mono); }
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Inter distinctive rendering */
+body {
+  font-family: var(--tb-font-sans);
+  font-feature-settings: "ss03", "cv01", "cv03", "cv04", "tnum";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
+}
+
+/* Heading tightening */
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+/* Code / data blocks */
+code, pre, .mono {
+  font-family: var(--tb-font-mono);
+  font-feature-settings: "tnum";
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--tb-background);
+    --color-foreground: var(--tb-foreground);
+    --color-card: var(--tb-card);
+    --color-card-foreground: var(--tb-card-foreground);
+    --color-popover: var(--tb-popover);
+    --color-popover-foreground: var(--tb-popover-foreground);
+    --color-primary: var(--tb-primary);
+    --color-primary-foreground: var(--tb-primary-foreground);
+    --color-muted: var(--tb-muted);
+    --color-muted-foreground: var(--tb-muted-foreground);
+    --color-border: var(--tb-border);
+    --color-input: var(--tb-input);
+    --color-ring: var(--tb-ring);
+    --radius-sm: var(--tb-radius-small);
+    --radius-md: var(--tb-radius-medium);
+    --radius-lg: var(--tb-radius-large);
+  }
+  @layer base {
+    body { background: var(--tb-background); color: var(--tb-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--tb-background); }
+      .text-background { color: var(--tb-background); }
+      .border-background { border-color: var(--tb-background); }
+      .ring-background { --tw-ring-color: var(--tb-background); }
+      .bg-foreground { background-color: var(--tb-foreground); }
+      .text-foreground { color: var(--tb-foreground); }
+      .border-foreground { border-color: var(--tb-foreground); }
+      .ring-foreground { --tw-ring-color: var(--tb-foreground); }
+      .bg-card { background-color: var(--tb-card); }
+      .text-card { color: var(--tb-card); }
+      .border-card { border-color: var(--tb-card); }
+      .ring-card { --tw-ring-color: var(--tb-card); }
+      .bg-card-foreground { background-color: var(--tb-card-foreground); }
+      .text-card-foreground { color: var(--tb-card-foreground); }
+      .border-card-foreground { border-color: var(--tb-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--tb-card-foreground); }
+      .bg-popover { background-color: var(--tb-popover); }
+      .text-popover { color: var(--tb-popover); }
+      .border-popover { border-color: var(--tb-popover); }
+      .ring-popover { --tw-ring-color: var(--tb-popover); }
+      .bg-popover-foreground { background-color: var(--tb-popover-foreground); }
+      .text-popover-foreground { color: var(--tb-popover-foreground); }
+      .border-popover-foreground { border-color: var(--tb-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--tb-popover-foreground); }
+      .bg-primary { background-color: var(--tb-primary); }
+      .text-primary { color: var(--tb-primary); }
+      .border-primary { border-color: var(--tb-primary); }
+      .ring-primary { --tw-ring-color: var(--tb-primary); }
+      .bg-primary-foreground { background-color: var(--tb-primary-foreground); }
+      .text-primary-foreground { color: var(--tb-primary-foreground); }
+      .border-primary-foreground { border-color: var(--tb-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--tb-primary-foreground); }
+      .bg-muted { background-color: var(--tb-muted); }
+      .text-muted { color: var(--tb-muted); }
+      .border-muted { border-color: var(--tb-muted); }
+      .ring-muted { --tw-ring-color: var(--tb-muted); }
+      .bg-muted-foreground { background-color: var(--tb-muted-foreground); }
+      .text-muted-foreground { color: var(--tb-muted-foreground); }
+      .border-muted-foreground { border-color: var(--tb-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--tb-muted-foreground); }
+      .bg-border { background-color: var(--tb-border); }
+      .text-border { color: var(--tb-border); }
+      .border-border { border-color: var(--tb-border); }
+      .ring-border { --tw-ring-color: var(--tb-border); }
+      .bg-input { background-color: var(--tb-input); }
+      .text-input { color: var(--tb-input); }
+      .border-input { border-color: var(--tb-input); }
+      .ring-input { --tw-ring-color: var(--tb-input); }
+      .bg-ring { background-color: var(--tb-ring); }
+      .text-ring { color: var(--tb-ring); }
+      .border-ring { border-color: var(--tb-ring); }
+      .ring-ring { --tw-ring-color: var(--tb-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="font-sans antialiased">
+    <div class="app-shell" data-viewport-mode="app-shell">
+
+        <!-- ============ SIDEBAR ============ -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-mark">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2a3 3 0 0 0-3 3v1a3 3 0 0 0-3 3v1a3 3 0 0 0 0 6v1a3 3 0 0 0 3 3v1a3 3 0 0 0 6 0v-1a3 3 0 0 0 3-3v-1a3 3 0 0 0 0-6v-1a3 3 0 0 0-3-3V5a3 3 0 0 0-3-3z"/>
+                        </svg>
+                    </div>
+                    <span class="logo-text">TedaBot</span>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" data-dom-id="nav-dashboard" class="nav-item">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+                    <span>仪表盘</span>
+                </a>
+                <a href="scenarios.html" data-dom-id="nav-scenarios" class="nav-item">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.96 4 4 0 0 0 .556 6.588A4 4 0 0 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.96 4 4 0 0 1-.556 6.588A4 4 0 0 1 12 18Z"/><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/><path d="M17.599 6.394a4 4 0 0 1 2.526 5.96"/></svg>
+                    <span>场景记忆</span>
+                </a>
+                <a href="roles.html" data-dom-id="nav-roles" class="nav-item">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <span>角色卡管理</span>
+                </a>
+                <a href="trigger.html" data-dom-id="nav-trigger" class="nav-item">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>
+                    <span>触发规则</span>
+                </a>
+                <a href="proactive.html" data-dom-id="nav-proactive" class="nav-item">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg>
+                    <span>主动互动</span>
+                </a>
+                <a href="logs.html" data-dom-id="nav-logs" class="nav-item active">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" x2="20" y1="19" y2="19"/></svg>
+                    <span>日志监控</span>
+                </a>
+                <a href="layouts.html" data-dom-id="nav-layouts" class="nav-item">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><line x1="9" x2="9" y1="3" y2="21"/><line x1="15" x2="15" y1="3" y2="21"/></svg>
+                    <span>布局方案</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="bot-status">
+                    <div class="bot-status-header">
+                        <div class="bot-status-dot"></div>
+                        <span class="bot-status-name">TedaBot</span>
+                    </div>
+                    <div class="bot-status-meta">已连接 · 运行 3h 24m</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ============ TOPBAR ============ -->
+        <header class="topbar">
+            <h1 class="page-title">日志监控</h1>
+            <div class="topbar-search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <input type="search" placeholder="搜索场景、角色卡、日志...">
+            </div>
+            <div class="status-pills">
+                <div class="status-pill">
+                    <div class="status-pill-dot" style="background: var(--tb-success)"></div>
+                    <span>已连接</span>
+                </div>
+                <div class="status-pill">
+                    <span>3h 24m</span>
+                </div>
+            </div>
+            <div class="avatar">
+                <div class="avatar-circle">T</div>
+            </div>
+        </header>
+
+        <!-- ============ MAIN CONTENT ============ -->
+        <main class="main-content overflow-y-auto" data-scroll-region="primary">
+
+            <!-- ---- Log Toolbar: Filter Tabs + Controls ---- -->
+            <div class="log-toolbar">
+                <div class="log-filter-tabs">
+                    <button class="log-filter-tab active" data-level="all">
+                        <span>全部</span>
+                        <span class="tab-count tabular-nums">24</span>
+                    </button>
+                    <button class="log-filter-tab" data-level="info">
+                        <span>INFO</span>
+                        <span class="tab-count tabular-nums">18</span>
+                    </button>
+                    <button class="log-filter-tab" data-level="warn">
+                        <span>WARN</span>
+                        <span class="tab-count tabular-nums">4</span>
+                    </button>
+                    <button class="log-filter-tab" data-level="error">
+                        <span>ERROR</span>
+                        <span class="tab-count tabular-nums">2</span>
+                    </button>
+                </div>
+                <div class="log-toolbar-spacer"></div>
+                <button class="log-autoscroll-toggle active">
+                    <span class="toggle-switch"></span>
+                    <span>自动滚动</span>
+                </button>
+                <button class="log-clear-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    <span>清空日志</span>
+                </button>
+            </div>
+
+            <!-- ---- Dual Column: Log Stream + Status Panels ---- -->
+            <section class="logs-dual-section">
+
+                <!-- Left Column: Log Stream -->
+                <div class="log-stream-wrapper">
+                    <div class="log-stream" id="log-stream">
+                        <div class="log-line">
+                            <span class="log-timestamp">16:52:03</span>
+                            <span class="log-level-badge info">INFO</span>
+                            <span class="log-message"><span class="msg-highlight">TedaBot</span> v2.4.1 启动中...</span>
+                        </div>
+                        <div class="log-line">
+                            <span class="log-timestamp">16:52:04</span>
+                            <span class="log-level-badge info">INFO</span>
+                            <span class="log-message">加载配置文件 config.yaml — <span class="msg-value">OK</span></span>
+                        </div>
+                        <div class="log-line">
+                            <span class="log-timestamp">16:52:04</span>
+                            <span class="log-level-badge info">INFO</span>
+                            <span class="log-message">连接 WebSocket gateway — <span class="msg-value">ws://10.0.0.2:8080</span></span>
+                        </div>
+                        <div class="log-line">
+                            <span class="log-timestamp">16:52:05</span>
+                            <span class="log-level-badge info">INFO</span>
+                            <span class="log-message">场景 <span class="msg-highlight">group:谁也没我们</span> 记忆已恢复 (12条)</span>
+                        </div>
+                        <div class="log-line">
+                            <span class="log-timestamp">16:52:05</span>
+                            <span class="log-level-badge info">INFO</span>
+                            <span class="log-message">场景 <span class="msg-highlight">group:技术交流群</span> 记忆已恢复 (24条)</span>
+                        </div>
+                        <div class="log-line">
+                            <span class="log-timestamp">16:52:06</span>
+                            <span class="log-level-badge info">INFO</span>
+                            <span class="log-message">场景 <span class="msg-highlight">private:张三</span> 记忆已恢复 (8条)</span>
+                        </div>
+                        <div class="log-line">
+                            <span class="log-timestamp">16:52:06</span>
+                            <span class="log-level-badge info">INFO</span>
+                            <span class="log-message">启动完成，正在监听 <span class="msg-value">5</span> 个场景</span>
+                        </div>
+                        <div class="log-line">
+                            <span class="log-timestamp">16:53:12</span>
+                            <span class="log-level-badge info">INFO</span>
+                            <span class="log-message">收到消息 → group:技术交流群 (用户: 王五)</span>
+                        </div>
+                        <div class="log-line">
+                            <span class="log-timestamp">16:53:14</span>
+                            <span class="log-level-badge info">INFO</span>
+                            <span class="log-message">AI 请求已发送 → model: deepseek-chat (scene: 技术交流群)</span>
+                        </div>
+                        <div class="log-line">
+                            <span class="log-timestamp">16:53:17</span>
+                            <span class="log-level-badge warn">WARN</span>
+                            <span class="log-message">AI 请求超时 (第1次重试) — <span class="msg-warn">timeout 30s</span></span>
+                        </div>
+                        <div class="log-line">
+                            <span class="log-timestamp">16:53:18</span>
+                            <span class="log-level-badge info">INFO</span>
+                            <span class="log-message">AI 响应已接收 (延迟 <span class="msg-value">4.2s</span>)</span>
+                        </div>
+                        <div class="log-line">
+                            <span class="log-timestamp">16:53:19</span>
+                            <span class="log-level-badge info">INFO</span>
+                            <span class="log-message">@回复已发送 → group:技术交流群 (队列: <span class="msg-value">sent</span>)</span>
+                        </div>
+                        <div class="log-line">
+                            <span class="log-timestamp">16:55:30</span>
+                            <span class="log-level-badge warn">WARN</span>
+                            <span class="log-message">主动发言频率接近上限 (<span class="msg-warn">48/50</span>)</span>
+                        </div>
+                        <div class="log-line">
+                            <span class="log-timestamp">16:55:32</span>
+                            <span class="log-level-badge info">INFO</span>
+                            <span class="log-message">队列状态更新 — pending: <span class="msg-value">3</span>, sent: <span class="msg-value">1247</span></span>
+                        </div>
+                        <div class="log-line">
+                            <span class="log-timestamp">16:56:10</span>
+                            <span class="log-level-badge error">ERROR</span>
+                            <span class="log-message">AI 请求失败 — <span class="msg-error">HTTP 429 Too Many Requests</span></span>
+                        </div>
+                        <div class="log-line">
+                            <span class="log-timestamp">16:56:11</span>
+                            <span class="log-level-badge warn">WARN</span>
+                            <span class="log-message">触发限流保护，冷却 <span class="msg-warn">60s</span></span>
+                        </div>
+                        <div class="log-line">
+                            <span class="log-timestamp">16:56:12</span>
+                            <span class="log-level-badge error">ERROR</span>
+                            <span class="log-message">消息发送失败 → group:喝茶聊天群 (<span class="msg-error">connection reset</span>)</span>
+                        </div>
+                        <div class="log-line">
+                            <span class="log-timestamp">16:56:13</span>
+                            <span class="log-level-badge info">INFO</span>
+                            <span class="log-message">消息已加入重试队列 (queue_id: <span class="msg-value">q-0892</span>)</span>
+                        </div>
+                        <div class="log-line">
+                            <span class="log-timestamp">16:57:01</span>
+                            <span class="log-level-badge info">INFO</span>
+                            <span class="log-message">重试队列处理完成 — sent: <span class="msg-value">1</span>, dropped: <span class="msg-value">0</span></span>
+                        </div>
+                        <div class="log-line">
+                            <span class="log-timestamp">16:57:45</span>
+                            <span class="log-level-badge info">INFO</span>
+                            <span class="log-message">收到消息 → private:张三 (用户: 张三)</span>
+                        </div>
+                        <div class="log-line">
+                            <span class="log-timestamp">16:57:48</span>
+                            <span class="log-level-badge info">INFO</span>
+                            <span class="log-message">AI 响应已接收 (延迟 <span class="msg-value">2.8s</span>)</span>
+                        </div>
+                        <div class="log-line">
+                            <span class="log-timestamp">16:57:49</span>
+                            <span class="log-level-badge info">INFO</span>
+                            <span class="log-message">@回复已发送 → private:张三 (队列: <span class="msg-value">sent</span>)</span>
+                        </div>
+                        <div class="log-line">
+                            <span class="log-timestamp">16:58:20</span>
+                            <span class="log-level-badge info">INFO</span>
+                            <span class="log-message">场景 <span class="msg-highlight">group:谁也没我们</span> 记忆已更新 (新增 1条)</span>
+                        </div>
+                        <div class="log-line">
+                            <span class="log-timestamp">16:58:30</span>
+                            <span class="log-level-badge info">INFO</span>
+                            <span class="log-message">心跳检测正常 — uptime: <span class="msg-value">3h 24m</span></span>
+                        </div>
+                        <!-- Auto-scroll indicator -->
+                        <div class="log-autoscroll-indicator"></div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Status Panels -->
+                <div class="log-status-panels">
+
+                    <!-- Panel 1: Send Queue -->
+                    <div class="log-status-panel">
+                        <div class="panel-header">
+                            <span class="panel-title">发送队列</span>
+                            <span class="panel-badge">运行中</span>
+                        </div>
+                        <div class="queue-list">
+                            <div class="queue-row">
+                                <div class="queue-dot warning"></div>
+                                <span class="queue-label">待发 <em class="queue-label-en">Pending</em></span>
+                                <span class="queue-count tabular-nums">3</span>
+                            </div>
+                            <div class="queue-row">
+                                <div class="queue-dot success"></div>
+                                <span class="queue-label">已发 <em class="queue-label-en">Sent</em></span>
+                                <span class="queue-count tabular-nums">1,247</span>
+                            </div>
+                            <div class="queue-row">
+                                <div class="queue-dot error"></div>
+                                <span class="queue-label">失败 <em class="queue-label-en">Failed</em></span>
+                                <span class="queue-count tabular-nums">2</span>
+                            </div>
+                            <div class="queue-row">
+                                <div class="queue-dot mute"></div>
+                                <span class="queue-label">丢弃 <em class="queue-label-en">Dropped</em></span>
+                                <span class="queue-count tabular-nums">1</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Panel 2: Scenario Status -->
+                    <div class="log-status-panel">
+                        <div class="panel-header">
+                            <span class="panel-title">场景状态</span>
+                            <span class="panel-badge">5 个场景</span>
+                        </div>
+                        <div class="scenario-status-list">
+                            <div class="scenario-status-row">
+                                <div class="scenario-status-dot success"></div>
+                                <span class="scenario-status-name">group:谁也没我们</span>
+                                <span class="scenario-status-time">23s前</span>
+                            </div>
+                            <div class="scenario-status-row">
+                                <div class="scenario-status-dot success"></div>
+                                <span class="scenario-status-name">group:技术交流群</span>
+                                <span class="scenario-status-time">1m前</span>
+                            </div>
+                            <div class="scenario-status-row">
+                                <div class="scenario-status-dot success"></div>
+                                <span class="scenario-status-name">private:张三</span>
+                                <span class="scenario-status-time">1m前</span>
+                            </div>
+                            <div class="scenario-status-row">
+                                <div class="scenario-status-dot mute"></div>
+                                <span class="scenario-status-name">group:喝茶聊天群</span>
+                                <span class="scenario-status-time">3m前</span>
+                            </div>
+                            <div class="scenario-status-row">
+                                <div class="scenario-status-dot mute"></div>
+                                <span class="scenario-status-name">private:李四</span>
+                                <span class="scenario-status-time">8m前</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Panel 3: System Health -->
+                    <div class="log-status-panel">
+                        <div class="panel-header">
+                            <span class="panel-title">系统健康</span>
+                            <span class="panel-badge">正常</span>
+                        </div>
+                        <div class="health-body">
+                            <!-- CPU Usage -->
+                            <div class="health-row">
+                                <div class="health-row-header">
+                                    <span class="health-row-label">CPU 使用率</span>
+                                    <span class="health-row-value">23%</span>
+                                </div>
+                                <div class="progress-bar-track">
+                                    <div class="progress-bar-fill" style="width: 23%"></div>
+                                </div>
+                            </div>
+                            <!-- Memory Usage -->
+                            <div class="health-row">
+                                <div class="health-row-header">
+                                    <span class="health-row-label">内存使用</span>
+                                    <span class="health-row-value">156MB / 512MB</span>
+                                </div>
+                                <div class="progress-bar-track">
+                                    <div class="progress-bar-fill" style="width: 30.5%"></div>
+                                </div>
+                            </div>
+                            <!-- Stats: API Latency + Uptime -->
+                            <div class="health-stat-row">
+                                <span class="health-stat-label">API 延迟</span>
+                                <span class="health-stat-value">avg 340ms</span>
+                            </div>
+                            <div class="health-stat-row">
+                                <span class="health-stat-label">运行时长</span>
+                                <span class="health-stat-value">3h 24m</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+    <script>lucide.createIcons();</script>
+    <script src="/assets/dashboard-api.js"></script>
+
+    <style id="critical-layout">
+/* ============================================================
+   TedaBot Dashboard — Critical Layout CSS
+   Static, responsive-safe, no JavaScript required
+   ============================================================ */
+
+/* ---- Reset ---- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--tb-canvas);
+  color: var(--tb-ink);
+  font-family: var(--tb-font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---- Scrollbar styling ---- */
+.main-content::-webkit-scrollbar,
+.scenario-list::-webkit-scrollbar,
+.sidebar-nav::-webkit-scrollbar,
+.log-stream::-webkit-scrollbar { width: 6px; }
+.main-content::-webkit-scrollbar-track,
+.scenario-list::-webkit-scrollbar-track,
+.sidebar-nav::-webkit-scrollbar-track,
+.log-stream::-webkit-scrollbar-track { background: transparent; }
+.main-content::-webkit-scrollbar-thumb,
+.scenario-list::-webkit-scrollbar-thumb,
+.sidebar-nav::-webkit-scrollbar-thumb,
+.log-stream::-webkit-scrollbar-thumb {
+  background: var(--tb-hairline);
+  border-radius: var(--tb-radius-full);
+}
+.main-content::-webkit-scrollbar-thumb:hover,
+.scenario-list::-webkit-scrollbar-thumb:hover,
+.sidebar-nav::-webkit-scrollbar-thumb:hover,
+.log-stream::-webkit-scrollbar-thumb:hover {
+  background: var(--tb-ash);
+}
+
+/* ---- App Shell Grid ---- */
+.app-shell {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  grid-template-rows: 56px 1fr;
+  grid-template-areas:
+    "sidebar topbar"
+    "sidebar main";
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+.sidebar {
+  grid-area: sidebar;
+  background: var(--tb-surface);
+  border-right: 1px solid var(--tb-hairline);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.sidebar-header {
+  height: 56px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--tb-hairline);
+  flex-shrink: 0;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-mark {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--tb-radius-medium);
+  background: var(--tb-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logo-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--tb-ink);
+  letter-spacing: -0.02em;
+}
+
+.sidebar-nav {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: var(--tb-radius-small);
+  color: var(--tb-mute);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  position: relative;
+  transition: background 0.12s ease, color 0.12s ease;
+  cursor: pointer;
+}
+
+.nav-item svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.nav-item:hover {
+  background: var(--tb-surface-elevated);
+  color: var(--tb-body);
+}
+
+.nav-item.active {
+  color: var(--tb-ink);
+  background: var(--tb-surface-elevated);
+}
+
+.nav-item.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 7px;
+  bottom: 7px;
+  width: 2px;
+  background: var(--tb-primary);
+  border-radius: var(--tb-radius-full);
+}
+
+.sidebar-footer {
+  padding: 12px;
+  border-top: 1px solid var(--tb-hairline);
+  flex-shrink: 0;
+}
+
+.bot-status {
+  background: var(--tb-surface-elevated);
+  border: 1px solid var(--tb-hairline);
+  border-radius: var(--tb-radius-medium);
+  padding: 12px;
+}
+
+.bot-status-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.bot-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--tb-radius-full);
+  background: var(--tb-success);
+  box-shadow: 0 0 0 3px var(--tb-success-soft);
+  flex-shrink: 0;
+}
+
+.bot-status-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tb-ink);
+}
+
+.bot-status-meta {
+  font-size: 11px;
+  color: var(--tb-mute);
+}
+
+/* ============================================================
+   TOPBAR
+   ============================================================ */
+.topbar {
+  grid-area: topbar;
+  background: var(--tb-surface);
+  border-bottom: 1px solid var(--tb-hairline);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 24px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+.page-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--tb-ink);
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.topbar-search {
+  position: relative;
+  margin-left: auto;
+  width: 260px;
+}
+
+.topbar-search svg {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  color: var(--tb-mute);
+  pointer-events: none;
+}
+
+.topbar-search input {
+  width: 100%;
+  height: 32px;
+  background: var(--tb-surface-elevated);
+  border: 1px solid var(--tb-hairline);
+  border-radius: var(--tb-radius-small);
+  padding: 0 10px 0 32px;
+  font-size: 12px;
+  color: var(--tb-body);
+  font-family: var(--tb-font-sans);
+  outline: none;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.topbar-search input::placeholder {
+  color: var(--tb-ash);
+}
+
+.topbar-search input:focus {
+  border-color: var(--tb-primary);
+  box-shadow: 0 0 0 2px var(--tb-primary-glow);
+}
+
+.status-pills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 10px;
+  background: var(--tb-surface-elevated);
+  border: 1px solid var(--tb-hairline);
+  border-radius: var(--tb-radius-full);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--tb-body);
+  white-space: nowrap;
+}
+
+.status-pill-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--tb-radius-full);
+  flex-shrink: 0;
+}
+
+.avatar {
+  margin-left: 4px;
+  flex-shrink: 0;
+}
+
+.avatar-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--tb-radius-full);
+  background: var(--tb-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--tb-primary-foreground);
+}
+
+/* ============================================================
+   MAIN CONTENT
+   ============================================================ */
+.main-content {
+  grid-area: main;
+  background: var(--tb-canvas);
+  overflow-y: auto;
+  padding: 24px;
+  min-height: 0;
+}
+
+/* ---- Card (shared) ---- */
+.card {
+  background: var(--tb-surface);
+  border: 1px solid var(--tb-hairline);
+  border-radius: var(--tb-radius-medium);
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--tb-hairline);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tb-ink);
+  letter-spacing: -0.01em;
+}
+
+.card-count {
+  font-size: 11px;
+  color: var(--tb-mute);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* ---- Queue Status ---- */
+.queue-list {
+  padding: 6px 0;
+}
+
+.queue-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 16px;
+  transition: background 0.12s ease;
+}
+
+.queue-row:hover {
+  background: var(--tb-surface-elevated);
+}
+
+.queue-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--tb-radius-full);
+  flex-shrink: 0;
+}
+
+.queue-dot.warning {
+  background: var(--tb-warning);
+  box-shadow: 0 0 0 2px var(--tb-warning-soft);
+}
+
+.queue-dot.success {
+  background: var(--tb-success);
+  box-shadow: 0 0 0 2px var(--tb-success-soft);
+}
+
+.queue-dot.error {
+  background: var(--tb-error);
+  box-shadow: 0 0 0 2px var(--tb-error-soft);
+}
+
+.queue-dot.mute {
+  background: var(--tb-ash);
+}
+
+.queue-label {
+  font-size: 13px;
+  color: var(--tb-body);
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.queue-label-en {
+  font-size: 10px;
+  color: var(--tb-ash);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.queue-count {
+  margin-left: auto;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--tb-ink);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* ---- Responsive fallback ---- */
+@media (max-width: 960px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "topbar"
+      "main";
+  }
+  .sidebar { display: none; }
+  .topbar-search { width: 180px; }
+  .logs-dual-section { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 560px) {
+  .topbar-search { display: none; }
+  .status-pills { display: none; }
+}
+
+/* ============================================================
+   LOG MONITOR PAGE — Page-specific CSS
+   ============================================================ */
+
+/* ---- Log Toolbar (filter tabs + controls) ---- */
+.log-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-shrink: 0;
+}
+
+.log-filter-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--tb-surface);
+  border: 1px solid var(--tb-hairline);
+  border-radius: var(--tb-radius-full);
+  padding: 3px;
+}
+
+.log-filter-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 12px;
+  border-radius: var(--tb-radius-full);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--tb-mute);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+  font-family: var(--tb-font-sans);
+}
+
+.log-filter-tab:hover {
+  color: var(--tb-body);
+  background: var(--tb-surface-elevated);
+}
+
+.log-filter-tab.active {
+  background: var(--tb-primary);
+  color: var(--tb-primary-foreground);
+}
+
+.log-filter-tab .tab-count {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: var(--tb-radius-small);
+  background: var(--tb-hairline-soft);
+  color: var(--tb-mute);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+.log-filter-tab.active .tab-count {
+  background: rgba(255, 255, 255, 0.18);
+  color: var(--tb-primary-foreground);
+}
+
+.log-toolbar-spacer {
+  flex: 1;
+}
+
+/* ---- Auto-scroll toggle ---- */
+.log-autoscroll-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 28px;
+  padding: 0 12px;
+  background: var(--tb-surface);
+  border: 1px solid var(--tb-hairline);
+  border-radius: var(--tb-radius-full);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--tb-body);
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease;
+  font-family: var(--tb-font-sans);
+}
+
+.log-autoscroll-toggle:hover {
+  background: var(--tb-surface-elevated);
+  border-color: var(--tb-hairline-strong);
+}
+
+.log-autoscroll-toggle.active {
+  color: var(--tb-primary);
+  border-color: var(--tb-primary-soft);
+}
+
+.toggle-switch {
+  width: 26px;
+  height: 14px;
+  border-radius: var(--tb-radius-full);
+  background: var(--tb-surface-elevated);
+  border: 1px solid var(--tb-hairline);
+  position: relative;
+  transition: background 0.12s ease;
+  flex-shrink: 0;
+}
+
+.toggle-switch::after {
+  content: "";
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: 10px;
+  height: 10px;
+  border-radius: var(--tb-radius-full);
+  background: var(--tb-mute);
+  transition: transform 0.12s ease, background 0.12s ease;
+}
+
+.log-autoscroll-toggle.active .toggle-switch {
+  background: var(--tb-primary-soft);
+  border-color: var(--tb-primary-soft);
+}
+
+.log-autoscroll-toggle.active .toggle-switch::after {
+  transform: translateX(12px);
+  background: var(--tb-primary);
+}
+
+/* ---- Clear logs button ---- */
+.log-clear-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 12px;
+  background: var(--tb-surface);
+  border: 1px solid var(--tb-hairline);
+  border-radius: var(--tb-radius-full);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--tb-mute);
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+  font-family: var(--tb-font-sans);
+}
+
+.log-clear-btn:hover {
+  background: var(--tb-surface-elevated);
+  color: var(--tb-error);
+  border-color: var(--tb-error-soft);
+}
+
+.log-clear-btn svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* ---- Dual Column Layout ---- */
+.logs-dual-section {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 16px;
+  height: calc(100vh - 56px - 48px - 24px * 2);
+  min-height: 0;
+}
+
+/* ---- Left Column: Log Stream ---- */
+.log-stream-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.log-stream {
+  background: var(--tb-surface);
+  border: 1px solid var(--tb-hairline);
+  border-radius: var(--tb-radius-medium);
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  font-family: var(--tb-font-mono);
+  font-size: 12px;
+  position: relative;
+}
+
+.log-line {
+  height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--tb-hairline-soft);
+  transition: background 0.12s ease;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.log-line:hover {
+  background: var(--tb-surface-elevated);
+}
+
+.log-line:last-child {
+  border-bottom: none;
+}
+
+.log-timestamp {
+  font-family: var(--tb-font-mono);
+  font-size: 11px;
+  color: var(--tb-mute);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.log-level-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: var(--tb-radius-small);
+  flex-shrink: 0;
+  letter-spacing: 0.03em;
+  line-height: 1.4;
+  font-family: var(--tb-font-mono);
+}
+
+.log-level-badge.info {
+  background: var(--tb-info-soft);
+  color: var(--tb-info);
+}
+
+.log-level-badge.warn {
+  background: var(--tb-warning-soft);
+  color: var(--tb-warning);
+}
+
+.log-level-badge.error {
+  background: var(--tb-error-soft);
+  color: var(--tb-error);
+}
+
+.log-message {
+  font-family: var(--tb-font-mono);
+  font-size: 12px;
+  color: var(--tb-body);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  flex: 1;
+}
+
+.log-message .msg-highlight {
+  color: var(--tb-ink);
+  font-weight: 500;
+}
+
+.log-message .msg-value {
+  color: var(--tb-info);
+}
+
+.log-message .msg-warn {
+  color: var(--tb-warning);
+}
+
+.log-message .msg-error {
+  color: var(--tb-error);
+}
+
+/* ---- Auto-scroll indicator line ---- */
+.log-autoscroll-indicator {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--tb-primary), transparent);
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+/* ---- Right Column: Status Panels ---- */
+.log-status-panels {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.log-status-panel {
+  background: var(--tb-surface);
+  border: 1px solid var(--tb-hairline);
+  border-radius: var(--tb-radius-medium);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.log-status-panel .panel-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--tb-hairline);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.log-status-panel .panel-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tb-ink);
+  letter-spacing: -0.01em;
+}
+
+.log-status-panel .panel-badge {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: var(--tb-radius-full);
+  background: var(--tb-success-soft);
+  color: var(--tb-success);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+.log-status-panel .panel-badge.warn {
+  background: var(--tb-warning-soft);
+  color: var(--tb-warning);
+}
+
+/* ---- Scenario Status List (compact) ---- */
+.scenario-status-list {
+  padding: 4px 0;
+}
+
+.scenario-status-row {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px;
+  transition: background 0.12s ease;
+}
+
+.scenario-status-row:hover {
+  background: var(--tb-surface-elevated);
+}
+
+.scenario-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--tb-radius-full);
+  flex-shrink: 0;
+}
+
+.scenario-status-dot.success {
+  background: var(--tb-success);
+  box-shadow: 0 0 0 2px var(--tb-success-soft);
+}
+
+.scenario-status-dot.mute {
+  background: var(--tb-ash);
+}
+
+.scenario-status-name {
+  font-size: 12px;
+  color: var(--tb-body);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  flex: 1;
+}
+
+.scenario-status-time {
+  font-family: var(--tb-font-mono);
+  font-size: 11px;
+  color: var(--tb-mute);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* ---- System Health Panel ---- */
+.health-body {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.health-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.health-row-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.health-row-label {
+  font-size: 12px;
+  color: var(--tb-mute);
+  font-weight: 500;
+}
+
+.health-row-value {
+  font-family: var(--tb-font-mono);
+  font-size: 11px;
+  color: var(--tb-body);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+.progress-bar-track {
+  height: 4px;
+  background: var(--tb-surface-elevated);
+  border-radius: var(--tb-radius-full);
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--tb-primary);
+  border-radius: var(--tb-radius-full);
+  transition: width 0.12s ease;
+}
+
+.progress-bar-fill.warning {
+  background: var(--tb-warning);
+}
+
+.health-stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 4px;
+  border-top: 1px solid var(--tb-hairline-soft);
+  margin-top: 2px;
+}
+
+.health-stat-row:first-child {
+  border-top: none;
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.health-stat-label {
+  font-size: 12px;
+  color: var(--tb-mute);
+  font-weight: 500;
+}
+
+.health-stat-value {
+  font-family: var(--tb-font-mono);
+  font-size: 12px;
+  color: var(--tb-ink);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+    </style>
+</body>
+</html>

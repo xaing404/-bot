@@ -105,3 +105,14 @@ logging:
   # 单个日志文件最大 5MB，保留 3 份滚动备份
   max_bytes: 5242880
   backup_count: 3
+
+# ---------- Dashboard Web 管理后台 ----------
+dashboard:
+  # 是否启用 Web 管理后台（在守护线程中运行 Flask，不影响机器人主循环）
+  enabled: false
+  # 监听地址（127.0.0.1 仅本机访问；0.0.0.0 允许局域网访问）
+  host: "127.0.0.1"
+  # 端口
+  port: 8050
+  # 日志 API 返回的最近行数
+  log_lines: 200

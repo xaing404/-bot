@@ -1,0 +1,91 @@
+{
+  "root": {
+    "nodeId": "gen-project-shell",
+    "kind": "project-shell",
+    "pageIds": ["page-dashboard", "page-scenarios", "page-roles", "page-trigger", "page-proactive", "page-logs", "page-layouts"],
+    "output": "partials/project-shell.html",
+    "sharedRegions": ["sidebar", "topbar", "root-frame", "bot-status"],
+    "privateRegions": [],
+    "mutableSlots": [],
+    "status": "planned",
+    "children": [
+      {
+        "nodeId": "gen-page-dashboard",
+        "kind": "page-leaf",
+        "pageIds": ["page-dashboard"],
+        "output": "pages/dashboard.html",
+        "sharedRegions": [],
+        "privateRegions": ["dashboard-content"],
+        "mutableSlots": ["page-title", "main-content"],
+        "status": "planned",
+        "children": []
+      },
+      {
+        "nodeId": "gen-page-scenarios",
+        "kind": "page-leaf",
+        "pageIds": ["page-scenarios"],
+        "output": "pages/scenarios.html",
+        "sharedRegions": [],
+        "privateRegions": ["scenarios-content"],
+        "mutableSlots": ["page-title", "main-content"],
+        "status": "planned",
+        "children": []
+      },
+      {
+        "nodeId": "gen-page-roles",
+        "kind": "page-leaf",
+        "pageIds": ["page-roles"],
+        "output": "pages/roles.html",
+        "sharedRegions": [],
+        "privateRegions": ["roles-content"],
+        "mutableSlots": ["page-title", "main-content"],
+        "status": "planned",
+        "children": []
+      },
+      {
+        "nodeId": "gen-page-trigger",
+        "kind": "page-leaf",
+        "pageIds": ["page-trigger"],
+        "output": "pages/trigger.html",
+        "sharedRegions": [],
+        "privateRegions": ["trigger-content"],
+        "mutableSlots": ["page-title", "main-content"],
+        "status": "planned",
+        "children": []
+      },
+      {
+        "nodeId": "gen-page-proactive",
+        "kind": "page-leaf",
+        "pageIds": ["page-proactive"],
+        "output": "pages/proactive.html",
+        "sharedRegions": [],
+        "privateRegions": ["proactive-content"],
+        "mutableSlots": ["page-title", "main-content"],
+        "status": "planned",
+        "children": []
+      },
+      {
+        "nodeId": "gen-page-logs",
+        "kind": "page-leaf",
+        "pageIds": ["page-logs"],
+        "output": "pages/logs.html",
+        "sharedRegions": [],
+        "privateRegions": ["logs-content"],
+        "mutableSlots": ["page-title", "main-content"],
+        "status": "planned",
+        "children": []
+      },
+      {
+        "nodeId": "gen-page-layouts",
+        "kind": "page-leaf",
+        "pageIds": ["page-layouts"],
+        "output": "pages/layouts.html",
+        "sharedRegions": [],
+        "privateRegions": ["layouts-content"],
+        "mutableSlots": ["page-title", "main-content"],
+        "status": "planned",
+        "children": []
+      }
+    ]
+  }
+}

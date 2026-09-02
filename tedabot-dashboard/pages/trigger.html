@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>触发规则</title>
+    <style id="theme-vars">
+/* ============================================================
+   TedaBot Dashboard — "Anodized Deep" Color & Type System
+   Inspired by Linear / Raycast dark dashboard aesthetics
+   Single brand hue: Indigo #5e6ad2
+   ============================================================ */
+
+/* ---- Design Tokens (Dark = Default) ---- */
+:root {
+  /* Surface ladder — 4-step dark gradient */
+  --tb-canvas: #08090a;
+  --tb-surface: #0d0d0f;
+  --tb-surface-elevated: #121214;
+  --tb-surface-card: #161619;
+
+  /* Hairlines */
+  --tb-hairline: #24272b;
+  --tb-hairline-soft: rgba(255, 255, 255, 0.06);
+  --tb-hairline-strong: rgba(255, 255, 255, 0.10);
+
+  /* Text */
+  --tb-ink: #f4f4f6;
+  --tb-body: #cdced4;
+  --tb-mute: #8a8f98;
+  --tb-ash: #5c6166;
+
+  /* Brand — single hue: Indigo */
+  --tb-primary: #5e6ad2;
+  --tb-primary-hover: #6d7ade;
+  --tb-primary-deep: #4c54b8;
+  --tb-primary-glow: rgba(94, 106, 210, 0.12);
+  --tb-primary-soft: rgba(94, 106, 210, 0.18);
+  --tb-primary-foreground: #ffffff;
+
+  /* State colors — semantic only */
+  --tb-success: #59d499;
+  --tb-success-soft: rgba(89, 212, 153, 0.12);
+  --tb-warning: #ffc533;
+  --tb-warning-soft: rgba(255, 197, 51, 0.12);
+  --tb-error: #ff6161;
+  --tb-error-soft: rgba(255, 97, 97, 0.12);
+  --tb-info: #57c1ff;
+  --tb-info-soft: rgba(87, 193, 255, 0.12);
+
+  /* Radius scale */
+  --tb-radius-small: 4px;
+  --tb-radius-medium: 8px;
+  --tb-radius-large: 16px;
+  --tb-radius-full: 9999px;
+
+  /* Shadows — floating layers only */
+  --tb-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.24), 0 1px 1px rgba(0, 0, 0, 0.12);
+  --tb-shadow-2: 0 8px 24px -8px rgba(0, 0, 0, 0.48);
+  --tb-shadow-3: 0 24px 60px -20px rgba(0, 0, 0, 0.64);
+
+  /* ---- Semantic Aliases (required by head contract) ---- */
+  --tb-background: var(--tb-canvas);
+  --tb-foreground: var(--tb-ink);
+  --tb-card: var(--tb-surface);
+  --tb-card-foreground: var(--tb-ink);
+  --tb-popover: var(--tb-surface-elevated);
+  --tb-popover-foreground: var(--tb-ink);
+  --tb-muted: var(--tb-surface-elevated);
+  --tb-muted-foreground: var(--tb-mute);
+  --tb-border: var(--tb-hairline);
+  --tb-input: var(--tb-hairline);
+  --tb-ring: #5e6ad2;
+
+  /* Typography */
+  --tb-font-sans: "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --tb-font-mono: "JetBrains Mono", "Geist Mono", "Berkeley Mono", ui-monospace, monospace;
+
+  /* ---- Raw token mirrors for @theme inline ---- */
+  --color-background: #08090a;
+  --color-foreground: #f4f4f6;
+  --color-card: #0d0d0f;
+  --color-card-foreground: #f4f4f6;
+  --color-popover: #121214;
+  --color-popover-foreground: #f4f4f6;
+  --color-primary: #5e6ad2;
+  --color-primary-foreground: #ffffff;
+  --color-muted: #121214;
+  --color-muted-foreground: #8a8f98;
+  --color-border: #24272b;
+  --color-input: #24272b;
+  --color-ring: #5e6ad2;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+}
+
+/* ---- Light mode (optional, not primary) ---- */
+.light {
+  --tb-canvas: #fafafa;
+  --tb-surface: #ffffff;
+  --tb-surface-elevated: #f4f4f5;
+  --tb-surface-card: #ebebed;
+  --tb-hairline: #e4e4e7;
+  --tb-hairline-soft: rgba(0, 0, 0, 0.04);
+  --tb-hairline-strong: rgba(0, 0, 0, 0.08);
+  --tb-ink: #18181b;
+  --tb-body: #3f3f46;
+  --tb-mute: #71717a;
+  --tb-ash: #a1a1aa;
+  --tb-primary: #5e6ad2;
+  --tb-primary-hover: #4c54b8;
+  --tb-primary-deep: #3d44a0;
+  --tb-primary-glow: rgba(94, 106, 210, 0.08);
+  --tb-primary-soft: rgba(94, 106, 210, 0.10);
+  --tb-background: var(--tb-canvas);
+  --tb-foreground: var(--tb-ink);
+  --tb-card: var(--tb-surface);
+  --tb-card-foreground: var(--tb-ink);
+  --tb-popover: var(--tb-surface);
+  --tb-popover-foreground: var(--tb-ink);
+  --tb-muted: var(--tb-surface-elevated);
+  --tb-muted-foreground: var(--tb-mute);
+  --tb-border: var(--tb-hairline);
+  --tb-input: var(--tb-hairline);
+  --tb-ring: #5e6ad2;
+  --color-background: #fafafa;
+  --color-foreground: #18181b;
+  --color-card: #ffffff;
+  --color-card-foreground: #18181b;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #18181b;
+  --color-muted: #f4f4f5;
+  --color-muted-foreground: #71717a;
+  --color-border: #e4e4e7;
+  --color-input: #e4e4e7;
+}
+
+/* ---- Typography Classes ---- */
+.font-sans { font-family: var(--tb-font-sans); }
+.font-mono { font-family: var(--tb-font-mono); }
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Inter distinctive rendering */
+body {
+  font-family: var(--tb-font-sans);
+  font-feature-settings: "ss03", "cv01", "cv03", "cv04", "tnum";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
+}
+
+/* Heading tightening */
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+/* Code / data blocks */
+code, pre, .mono {
+  font-family: var(--tb-font-mono);
+  font-feature-settings: "tnum";
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--tb-background);
+    --color-foreground: var(--tb-foreground);
+    --color-card: var(--tb-card);
+    --color-card-foreground: var(--tb-card-foreground);
+    --color-popover: var(--tb-popover);
+    --color-popover-foreground: var(--tb-popover-foreground);
+    --color-primary: var(--tb-primary);
+    --color-primary-foreground: var(--tb-primary-foreground);
+    --color-muted: var(--tb-muted);
+    --color-muted-foreground: var(--tb-muted-foreground);
+    --color-border: var(--tb-border);
+    --color-input: var(--tb-input);
+    --color-ring: var(--tb-ring);
+    --radius-sm: var(--tb-radius-small);
+    --radius-md: var(--tb-radius-medium);
+    --radius-lg: var(--tb-radius-large);
+  }
+  @layer base {
+    body { background: var(--tb-background); color: var(--tb-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--tb-background); }
+      .text-background { color: var(--tb-background); }
+      .border-background { border-color: var(--tb-background); }
+      .ring-background { --tw-ring-color: var(--tb-background); }
+      .bg-foreground { background-color: var(--tb-foreground); }
+      .text-foreground { color: var(--tb-foreground); }
+      .border-foreground { border-color: var(--tb-foreground); }
+      .ring-foreground { --tw-ring-color: var(--tb-foreground); }
+      .bg-card { background-color: var(--tb-card); }
+      .text-card { color: var(--tb-card); }
+      .border-card { border-color: var(--tb-card); }
+      .ring-card { --tw-ring-color: var(--tb-card); }
+      .bg-card-foreground { background-color: var(--tb-card-foreground); }
+      .text-card-foreground { color: var(--tb-card-foreground); }
+      .border-card-foreground { border-color: var(--tb-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--tb-card-foreground); }
+      .bg-popover { background-color: var(--tb-popover); }
+      .text-popover { color: var(--tb-popover); }
+      .border-popover { border-color: var(--tb-popover); }
+      .ring-popover { --tw-ring-color: var(--tb-popover); }
+      .bg-popover-foreground { background-color: var(--tb-popover-foreground); }
+      .text-popover-foreground { color: var(--tb-popover-foreground); }
+      .border-popover-foreground { border-color: var(--tb-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--tb-popover-foreground); }
+      .bg-primary { background-color: var(--tb-primary); }
+      .text-primary { color: var(--tb-primary); }
+      .border-primary { border-color: var(--tb-primary); }
+      .ring-primary { --tw-ring-color: var(--tb-primary); }
+      .bg-primary-foreground { background-color: var(--tb-primary-foreground); }
+      .text-primary-foreground { color: var(--tb-primary-foreground); }
+      .border-primary-foreground { border-color: var(--tb-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--tb-primary-foreground); }
+      .bg-muted { background-color: var(--tb-muted); }
+      .text-muted { color: var(--tb-muted); }
+      .border-muted { border-color: var(--tb-muted); }
+      .ring-muted { --tw-ring-color: var(--tb-muted); }
+      .bg-muted-foreground { background-color: var(--tb-muted-foreground); }
+      .text-muted-foreground { color: var(--tb-muted-foreground); }
+      .border-muted-foreground { border-color: var(--tb-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--tb-muted-foreground); }
+      .bg-border { background-color: var(--tb-border); }
+      .text-border { color: var(--tb-border); }
+      .border-border { border-color: var(--tb-border); }
+      .ring-border { --tw-ring-color: var(--tb-border); }
+      .bg-input { background-color: var(--tb-input); }
+      .text-input { color: var(--tb-input); }
+      .border-input { border-color: var(--tb-input); }
+      .ring-input { --tw-ring-color: var(--tb-input); }
+      .bg-ring { background-color: var(--tb-ring); }
+      .text-ring { color: var(--tb-ring); }
+      .border-ring { border-color: var(--tb-ring); }
+      .ring-ring { --tw-ring-color: var(--tb-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="font-sans antialiased">
+    <div class="app-shell" data-viewport-mode="app-shell">
+        <!-- ============ SIDEBAR ============ -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-mark">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2a3 3 0 0 0-3 3v1a3 3 0 0 0-3 3v1a3 3 0 0 0 0 6v1a3 3 0 0 0 3 3v1a3 3 0 0 0 6 0v-1a3 3 0 0 0 3-3v-1a3 3 0 0 0 0-6v-1a3 3 0 0 0-3-3V5a3 3 0 0 0-3-3z"/>
+                        </svg>
+                    </div>
+                    <span class="logo-text">TedaBot</span>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" data-dom-id="nav-dashboard" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+                    <span>仪表盘</span>
+                </a>
+                <a href="scenarios.html" data-dom-id="nav-scenarios" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.96 4 4 0 0 0 .556 6.588A4 4 0 0 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.96 4 4 0 0 1-.556 6.588A4 4 0 0 1 12 18Z"/><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/><path d="M17.599 6.394a4 4 0 0 1 2.526 5.96"/></svg>
+                    <span>场景记忆</span>
+                </a>
+                <a href="roles.html" data-dom-id="nav-roles" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <span>角色卡管理</span>
+                </a>
+                <a href="trigger.html" data-dom-id="nav-trigger" class="nav-item active">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>
+                    <span>触发规则</span>
+                </a>
+                <a href="proactive.html" data-dom-id="nav-proactive" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg>
+                    <span>主动互动</span>
+                </a>
+                <a href="logs.html" data-dom-id="nav-logs" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" x2="20" y1="19" y2="19"/></svg>
+                    <span>日志监控</span>
+                </a>
+                <a href="layouts.html" data-dom-id="nav-layouts" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><line x1="9" x2="9" y1="3" y2="21"/><line x1="15" x2="15" y1="3" y2="21"/></svg>
+                    <span>布局方案</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="bot-status">
+                    <div class="bot-status-header">
+                        <div class="bot-status-dot"></div>
+                        <span class="bot-status-name">TedaBot</span>
+                    </div>
+                    <div class="bot-status-meta">已连接 · 运行 3h 24m</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ============ TOPBAR ============ -->
+        <header class="topbar">
+            <h1 class="page-title">触发规则</h1>
+            <div class="topbar-search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <input type="search" placeholder="搜索场景、角色卡、日志...">
+            </div>
+            <div class="status-pills">
+                <div class="status-pill">
+                    <div class="status-pill-dot" style="background: var(--tb-success)"></div>
+                    <span>已连接</span>
+                </div>
+                <div class="status-pill">
+                    <span>3h 24m</span>
+                </div>
+            </div>
+            <div class="avatar">
+                <div class="avatar-circle">T</div>
+            </div>
+        </header>
+
+        <!-- ============ MAIN ============ -->
+        <main class="main overflow-y-auto" data-scroll-region="primary">
+            <div class="main-inner">
+                <div class="config-stack">
+
+                    <!-- Card 1: 关键词触发 -->
+                    <section class="config-card">
+                        <div class="card-header">
+                            <h3>关键词触发</h3>
+                            <p class="card-desc">群聊中出现关键词即触发回复</p>
+                        </div>
+                        <div class="chip-row">
+                            <span class="chip">@TedaBot
+                                <button class="chip-x" aria-label="移除">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                                </button>
+                            </span>
+                            <span class="chip">你好
+                                <button class="chip-x" aria-label="移除">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                                </button>
+                            </span>
+                            <span class="chip">在吗
+                                <button class="chip-x" aria-label="移除">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                                </button>
+                            </span>
+                            <span class="chip">帮忙
+                                <button class="chip-x" aria-label="移除">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                                </button>
+                            </span>
+                            <input type="text" class="add-input" placeholder="添加关键词...">
+                            <button class="add-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                                添加
+                            </button>
+                        </div>
+                    </section>
+
+                    <!-- Card 2: 模糊匹配 -->
+                    <section class="config-card">
+                        <div class="card-header">
+                            <h3>模糊匹配</h3>
+                            <p class="card-desc">相近词也触发回复</p>
+                        </div>
+                        <div class="toggle-row">
+                            <div class="toggle-info">
+                                <span class="toggle-label">启用模糊匹配</span>
+                            </div>
+                            <div class="toggle-switch toggle-on" role="switch" aria-checked="true"></div>
+                        </div>
+                        <div class="slider-block">
+                            <div class="slider-header">
+                                <span class="slider-label">相似度阈值</span>
+                                <span class="slider-value tabular-nums">0.75</span>
+                            </div>
+                            <input type="range" class="range-input" min="0" max="1" step="0.01" value="0.75">
+                            <p class="helper-text">阈值越高，匹配越严格</p>
+                        </div>
+                    </section>
+
+                    <!-- Card 3: @机器人触发 -->
+                    <section class="config-card">
+                        <div class="card-header">
+                            <h3>@机器人触发</h3>
+                        </div>
+                        <div class="toggle-row">
+                            <div class="toggle-info">
+                                <span class="toggle-label">被@时回复</span>
+                                <span class="toggle-desc">绕过冷却限制，最高优先级</span>
+                            </div>
+                            <div class="toggle-switch toggle-on" role="switch" aria-checked="true"></div>
+                        </div>
+                        <div class="toggle-row">
+                            <div class="toggle-info">
+                                <span class="toggle-label">回复时@提问人</span>
+                                <span class="toggle-desc">在回复开头@提问人</span>
+                            </div>
+                            <div class="toggle-switch toggle-on" role="switch" aria-checked="true"></div>
+                        </div>
+                    </section>
+
+                    <!-- Card 4: 私聊回复 -->
+                    <section class="config-card">
+                        <div class="card-header">
+                            <h3>私聊回复</h3>
+                        </div>
+                        <div class="toggle-row">
+                            <div class="toggle-info">
+                                <span class="toggle-label">私聊直接回复</span>
+                                <span class="toggle-desc">无需关键词，任意消息即回复</span>
+                            </div>
+                            <div class="toggle-switch toggle-on" role="switch" aria-checked="true"></div>
+                        </div>
+                    </section>
+
+                    <!-- Card 5: 重复检测 -->
+                    <section class="config-card">
+                        <div class="card-header">
+                            <h3>重复检测</h3>
+                        </div>
+                        <div class="slider-block">
+                            <div class="slider-header">
+                                <span class="slider-label">重复相似度阈值</span>
+                                <span class="slider-value tabular-nums">0.8</span>
+                            </div>
+                            <input type="range" class="range-input" min="0" max="1" step="0.01" value="0.8">
+                            <p class="helper-text">与最近回复相似度≥该值时自动拦截</p>
+                        </div>
+                        <div class="num-block">
+                            <div class="slider-header">
+                                <span class="slider-label">多条消息连发间隔(秒)</span>
+                                <input type="number" class="num-input tabular-nums" value="0.5" step="0.1" min="0">
+                            </div>
+                            <p class="helper-text">条间停顿，0为无停顿</p>
+                        </div>
+                    </section>
+
+                </div>
+
+                <!-- Save Bar -->
+                <div class="save-bar">
+                    <button class="btn-reset">重置</button>
+                    <button class="btn-save">保存配置</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script>lucide.createIcons();</script>
+
+    <style id="critical-layout">
+      /* ===== App Shell ===== */
+      .app-shell {
+        display: grid;
+        grid-template-columns: 240px 1fr;
+        grid-template-rows: 56px 1fr;
+        height: 100vh;
+        overflow: hidden;
+        background: var(--tb-canvas);
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        grid-column: 1;
+        grid-row: 1 / -1;
+        display: flex;
+        flex-direction: column;
+        background: var(--tb-surface);
+        border-right: 1px solid var(--tb-hairline);
+      }
+      .sidebar-header {
+        padding: 0 16px;
+        display: flex;
+        align-items: center;
+        height: 56px;
+        flex-shrink: 0;
+      }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .logo-mark {
+        width: 28px;
+        height: 28px;
+        border-radius: var(--tb-radius-medium);
+        background: var(--tb-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .logo-text {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--tb-ink);
+        letter-spacing: -0.02em;
+      }
+      .sidebar-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        padding: 8px;
+        flex: 1;
+        overflow-y: auto;
+      }
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        color: var(--tb-mute);
+        text-decoration: none;
+        position: relative;
+        transition: background-color 0.12s ease, color 0.12s ease;
+        cursor: pointer;
+      }
+      .nav-item svg {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+        stroke-width: 1.5;
+      }
+      .nav-item:hover {
+        background: var(--tb-surface-elevated);
+        color: var(--tb-body);
+      }
+      .nav-item.active {
+        background: var(--tb-primary-glow);
+        color: var(--tb-primary);
+      }
+      .nav-item.active::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 2px;
+        height: 16px;
+        background: var(--tb-primary);
+        border-radius: 2px;
+      }
+      .sidebar-footer {
+        padding: 12px 16px;
+        border-top: 1px solid var(--tb-hairline);
+        flex-shrink: 0;
+      }
+      .bot-status {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .bot-status-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .bot-status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--tb-success);
+        flex-shrink: 0;
+      }
+      .bot-status-name {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--tb-ink);
+      }
+      .bot-status-meta {
+        font-size: 11px;
+        color: var(--tb-mute);
+        padding-left: 16px;
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* ===== Topbar ===== */
+      .topbar {
+        grid-column: 2;
+        grid-row: 1;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 0 24px;
+        background: var(--tb-surface);
+        border-bottom: 1px solid var(--tb-hairline);
+      }
+      .page-title {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--tb-ink);
+        margin: 0;
+      }
+      .topbar-search {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--tb-surface-elevated);
+        border: 1px solid var(--tb-hairline);
+        border-radius: 6px;
+        padding: 0 10px;
+        height: 32px;
+        width: 240px;
+      }
+      .topbar-search svg {
+        width: 14px;
+        height: 14px;
+        color: var(--tb-mute);
+        flex-shrink: 0;
+      }
+      .topbar-search input {
+        background: transparent;
+        border: none;
+        outline: none;
+        font-size: 13px;
+        color: var(--tb-body);
+        width: 100%;
+        font-family: inherit;
+      }
+      .topbar-search input::placeholder {
+        color: var(--tb-mute);
+      }
+      .status-pills {
+        display: flex;
+        gap: 8px;
+      }
+      .status-pill {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--tb-surface-elevated);
+        border: 1px solid var(--tb-hairline);
+        border-radius: var(--tb-radius-full);
+        padding: 4px 10px;
+        font-size: 12px;
+        color: var(--tb-body);
+        font-variant-numeric: tabular-nums;
+      }
+      .status-pill-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+      }
+      .avatar {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+      }
+      .avatar-circle {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: var(--tb-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--tb-primary-foreground);
+      }
+
+      /* ===== Main Content ===== */
+      .main {
+        grid-column: 2;
+        grid-row: 2;
+        overflow-y: auto;
+        padding: 24px;
+        background: var(--tb-canvas);
+      }
+      .main-inner {
+        max-width: 800px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        min-height: 100%;
+      }
+      .config-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      /* ===== Config Cards ===== */
+      .config-card {
+        background: var(--tb-surface);
+        border: 1px solid var(--tb-hairline);
+        border-radius: var(--tb-radius-medium);
+        padding: 24px;
+      }
+      .card-header {
+        margin-bottom: 16px;
+      }
+      .card-header h3 {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--tb-ink);
+        margin: 0 0 4px;
+      }
+      .card-desc {
+        font-size: 12px;
+        color: var(--tb-mute);
+        margin: 0;
+      }
+
+      /* ===== Keyword Chips ===== */
+      .chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--tb-surface-elevated);
+        border: 1px solid var(--tb-hairline);
+        border-radius: var(--tb-radius-full);
+        padding: 4px 8px 4px 12px;
+        font-size: 12px;
+        color: var(--tb-body);
+        line-height: 1;
+      }
+      .chip-x {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: none;
+        color: var(--tb-mute);
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
+        transition: color 0.12s ease;
+      }
+      .chip-x svg {
+        width: 14px;
+        height: 14px;
+      }
+      .chip-x:hover {
+        color: var(--tb-error);
+      }
+      .add-input {
+        width: 120px;
+        background: transparent;
+        border: 1px dashed var(--tb-hairline);
+        border-radius: var(--tb-radius-full);
+        height: 28px;
+        padding: 0 12px;
+        font-size: 12px;
+        color: var(--tb-body);
+        font-family: inherit;
+        outline: none;
+      }
+      .add-input::placeholder {
+        color: var(--tb-mute);
+      }
+      .add-input:focus {
+        border-color: var(--tb-primary);
+        border-style: solid;
+      }
+      .add-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: transparent;
+        border: 1px solid var(--tb-hairline);
+        border-radius: var(--tb-radius-full);
+        height: 28px;
+        padding: 0 12px;
+        font-size: 12px;
+        color: var(--tb-body);
+        cursor: pointer;
+        font-family: inherit;
+        transition: border-color 0.12s ease, color 0.12s ease;
+      }
+      .add-btn svg {
+        width: 14px;
+        height: 14px;
+      }
+      .add-btn:hover {
+        border-color: var(--tb-primary);
+        color: var(--tb-primary);
+      }
+
+      /* ===== Toggle Switch ===== */
+      .toggle-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--tb-hairline-soft);
+      }
+      .toggle-row:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+      }
+      .toggle-row:first-of-type {
+        padding-top: 0;
+      }
+      .toggle-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .toggle-label {
+        font-size: 13px;
+        color: var(--tb-body);
+      }
+      .toggle-desc {
+        font-size: 11px;
+        color: var(--tb-mute);
+      }
+      .toggle-switch {
+        width: 44px;
+        height: 24px;
+        border-radius: var(--tb-radius-medium);
+        position: relative;
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+        flex-shrink: 0;
+      }
+      .toggle-switch::after {
+        content: "";
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #ffffff;
+        top: 2px;
+        left: 2px;
+        transition: transform 0.15s ease;
+      }
+      .toggle-switch.toggle-on {
+        background: var(--tb-primary);
+      }
+      .toggle-switch.toggle-on::after {
+        transform: translateX(20px);
+      }
+      .toggle-switch.toggle-off {
+        background: var(--tb-surface-card);
+      }
+
+      /* ===== Slider ===== */
+      .slider-block {
+        margin-top: 16px;
+      }
+      .slider-block:first-of-type {
+        margin-top: 0;
+      }
+      .slider-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+      .slider-label {
+        font-size: 13px;
+        color: var(--tb-body);
+      }
+      .slider-value {
+        font-family: var(--tb-font-mono);
+        font-size: 13px;
+        color: var(--tb-ink);
+      }
+      .range-input {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        height: 4px;
+        background: var(--tb-surface-card);
+        border-radius: 2px;
+        outline: none;
+        cursor: pointer;
+      }
+      .range-input::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--tb-primary);
+        cursor: pointer;
+        border: none;
+      }
+      .range-input::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--tb-primary);
+        cursor: pointer;
+        border: none;
+      }
+      .helper-text {
+        font-size: 11px;
+        color: var(--tb-mute);
+        margin: 8px 0 0;
+      }
+
+      /* ===== Number Input ===== */
+      .num-block {
+        margin-top: 20px;
+      }
+      .num-input {
+        width: 80px;
+        background: var(--tb-surface-elevated);
+        border: 1px solid var(--tb-hairline);
+        border-radius: 6px;
+        height: 28px;
+        padding: 0 8px;
+        font-size: 13px;
+        color: var(--tb-ink);
+        font-family: var(--tb-font-mono);
+        outline: none;
+        text-align: right;
+      }
+      .num-input:focus {
+        border-color: var(--tb-primary);
+      }
+
+      /* ===== Save Bar ===== */
+      .save-bar {
+        position: sticky;
+        bottom: 0;
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        padding: 16px 0 0;
+        margin-top: 16px;
+        background: var(--tb-canvas);
+      }
+      .btn-reset {
+        background: transparent;
+        border: 1px solid var(--tb-hairline);
+        border-radius: var(--tb-radius-medium);
+        height: 36px;
+        padding: 0 16px;
+        font-size: 13px;
+        color: var(--tb-mute);
+        cursor: pointer;
+        font-family: inherit;
+        transition: border-color 0.12s ease, color 0.12s ease;
+      }
+      .btn-reset:hover {
+        border-color: var(--tb-hairline-strong);
+        color: var(--tb-body);
+      }
+      .btn-save {
+        background: var(--tb-primary);
+        border: none;
+        border-radius: var(--tb-radius-medium);
+        height: 36px;
+        padding: 0 20px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--tb-primary-foreground);
+        cursor: pointer;
+        font-family: inherit;
+        transition: background-color 0.12s ease;
+      }
+      .btn-save:hover {
+        background: var(--tb-primary-hover);
+      }
+    </style>
+</body>
+</html>

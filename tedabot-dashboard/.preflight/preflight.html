@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preflight</title>
+    <style id="theme-vars">
+/* ============================================================
+   TedaBot Dashboard — "Anodized Deep" Color & Type System
+   Inspired by Linear / Raycast dark dashboard aesthetics
+   Single brand hue: Indigo #5e6ad2
+   ============================================================ */
+
+/* ---- Design Tokens (Dark = Default) ---- */
+:root {
+  /* Surface ladder — 4-step dark gradient */
+  --tb-canvas: #08090a;
+  --tb-surface: #0d0d0f;
+  --tb-surface-elevated: #121214;
+  --tb-surface-card: #161619;
+
+  /* Hairlines */
+  --tb-hairline: #24272b;
+  --tb-hairline-soft: rgba(255, 255, 255, 0.06);
+  --tb-hairline-strong: rgba(255, 255, 255, 0.10);
+
+  /* Text */
+  --tb-ink: #f4f4f6;
+  --tb-body: #cdced4;
+  --tb-mute: #8a8f98;
+  --tb-ash: #5c6166;
+
+  /* Brand — single hue: Indigo */
+  --tb-primary: #5e6ad2;
+  --tb-primary-hover: #6d7ade;
+  --tb-primary-deep: #4c54b8;
+  --tb-primary-glow: rgba(94, 106, 210, 0.12);
+  --tb-primary-soft: rgba(94, 106, 210, 0.18);
+  --tb-primary-foreground: #ffffff;
+
+  /* State colors — semantic only */
+  --tb-success: #59d499;
+  --tb-success-soft: rgba(89, 212, 153, 0.12);
+  --tb-warning: #ffc533;
+  --tb-warning-soft: rgba(255, 197, 51, 0.12);
+  --tb-error: #ff6161;
+  --tb-error-soft: rgba(255, 97, 97, 0.12);
+  --tb-info: #57c1ff;
+  --tb-info-soft: rgba(87, 193, 255, 0.12);
+
+  /* Radius scale */
+  --tb-radius-small: 4px;
+  --tb-radius-medium: 8px;
+  --tb-radius-large: 16px;
+  --tb-radius-full: 9999px;
+
+  /* Shadows — floating layers only */
+  --tb-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.24), 0 1px 1px rgba(0, 0, 0, 0.12);
+  --tb-shadow-2: 0 8px 24px -8px rgba(0, 0, 0, 0.48);
+  --tb-shadow-3: 0 24px 60px -20px rgba(0, 0, 0, 0.64);
+
+  /* ---- Semantic Aliases (required by head contract) ---- */
+  --tb-background: var(--tb-canvas);
+  --tb-foreground: var(--tb-ink);
+  --tb-card: var(--tb-surface);
+  --tb-card-foreground: var(--tb-ink);
+  --tb-popover: var(--tb-surface-elevated);
+  --tb-popover-foreground: var(--tb-ink);
+  --tb-muted: var(--tb-surface-elevated);
+  --tb-muted-foreground: var(--tb-mute);
+  --tb-border: var(--tb-hairline);
+  --tb-input: var(--tb-hairline);
+  --tb-ring: #5e6ad2;
+
+  /* Typography */
+  --tb-font-sans: "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --tb-font-mono: "JetBrains Mono", "Geist Mono", "Berkeley Mono", ui-monospace, monospace;
+
+  /* ---- Raw token mirrors for @theme inline ---- */
+  --color-background: #08090a;
+  --color-foreground: #f4f4f6;
+  --color-card: #0d0d0f;
+  --color-card-foreground: #f4f4f6;
+  --color-popover: #121214;
+  --color-popover-foreground: #f4f4f6;
+  --color-primary: #5e6ad2;
+  --color-primary-foreground: #ffffff;
+  --color-muted: #121214;
+  --color-muted-foreground: #8a8f98;
+  --color-border: #24272b;
+  --color-input: #24272b;
+  --color-ring: #5e6ad2;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+}
+
+/* ---- Light mode (optional, not primary) ---- */
+.light {
+  --tb-canvas: #fafafa;
+  --tb-surface: #ffffff;
+  --tb-surface-elevated: #f4f4f5;
+  --tb-surface-card: #ebebed;
+  --tb-hairline: #e4e4e7;
+  --tb-hairline-soft: rgba(0, 0, 0, 0.04);
+  --tb-hairline-strong: rgba(0, 0, 0, 0.08);
+  --tb-ink: #18181b;
+  --tb-body: #3f3f46;
+  --tb-mute: #71717a;
+  --tb-ash: #a1a1aa;
+  --tb-primary: #5e6ad2;
+  --tb-primary-hover: #4c54b8;
+  --tb-primary-deep: #3d44a0;
+  --tb-primary-glow: rgba(94, 106, 210, 0.08);
+  --tb-primary-soft: rgba(94, 106, 210, 0.10);
+  --tb-background: var(--tb-canvas);
+  --tb-foreground: var(--tb-ink);
+  --tb-card: var(--tb-surface);
+  --tb-card-foreground: var(--tb-ink);
+  --tb-popover: var(--tb-surface);
+  --tb-popover-foreground: var(--tb-ink);
+  --tb-muted: var(--tb-surface-elevated);
+  --tb-muted-foreground: var(--tb-mute);
+  --tb-border: var(--tb-hairline);
+  --tb-input: var(--tb-hairline);
+  --tb-ring: #5e6ad2;
+  --color-background: #fafafa;
+  --color-foreground: #18181b;
+  --color-card: #ffffff;
+  --color-card-foreground: #18181b;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #18181b;
+  --color-muted: #f4f4f5;
+  --color-muted-foreground: #71717a;
+  --color-border: #e4e4e7;
+  --color-input: #e4e4e7;
+}
+
+/* ---- Typography Classes ---- */
+.font-sans { font-family: var(--tb-font-sans); }
+.font-mono { font-family: var(--tb-font-mono); }
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Inter distinctive rendering */
+body {
+  font-family: var(--tb-font-sans);
+  font-feature-settings: "ss03", "cv01", "cv03", "cv04", "tnum";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
+}
+
+/* Heading tightening */
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+/* Code / data blocks */
+code, pre, .mono {
+  font-family: var(--tb-font-mono);
+  font-feature-settings: "tnum";
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--tb-background);
+    --color-foreground: var(--tb-foreground);
+    --color-card: var(--tb-card);
+    --color-card-foreground: var(--tb-card-foreground);
+    --color-popover: var(--tb-popover);
+    --color-popover-foreground: var(--tb-popover-foreground);
+    --color-primary: var(--tb-primary);
+    --color-primary-foreground: var(--tb-primary-foreground);
+    --color-muted: var(--tb-muted);
+    --color-muted-foreground: var(--tb-muted-foreground);
+    --color-border: var(--tb-border);
+    --color-input: var(--tb-input);
+    --color-ring: var(--tb-ring);
+    --radius-sm: var(--tb-radius-small);
+    --radius-md: var(--tb-radius-medium);
+    --radius-lg: var(--tb-radius-large);
+  }
+  @layer base {
+    body { background: var(--tb-background); color: var(--tb-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--tb-background); }
+      .text-background { color: var(--tb-background); }
+      .border-background { border-color: var(--tb-background); }
+      .ring-background { --tw-ring-color: var(--tb-background); }
+      .bg-foreground { background-color: var(--tb-foreground); }
+      .text-foreground { color: var(--tb-foreground); }
+      .border-foreground { border-color: var(--tb-foreground); }
+      .ring-foreground { --tw-ring-color: var(--tb-foreground); }
+      .bg-card { background-color: var(--tb-card); }
+      .text-card { color: var(--tb-card); }
+      .border-card { border-color: var(--tb-card); }
+      .ring-card { --tw-ring-color: var(--tb-card); }
+      .bg-card-foreground { background-color: var(--tb-card-foreground); }
+      .text-card-foreground { color: var(--tb-card-foreground); }
+      .border-card-foreground { border-color: var(--tb-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--tb-card-foreground); }
+      .bg-popover { background-color: var(--tb-popover); }
+      .text-popover { color: var(--tb-popover); }
+      .border-popover { border-color: var(--tb-popover); }
+      .ring-popover { --tw-ring-color: var(--tb-popover); }
+      .bg-popover-foreground { background-color: var(--tb-popover-foreground); }
+      .text-popover-foreground { color: var(--tb-popover-foreground); }
+      .border-popover-foreground { border-color: var(--tb-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--tb-popover-foreground); }
+      .bg-primary { background-color: var(--tb-primary); }
+      .text-primary { color: var(--tb-primary); }
+      .border-primary { border-color: var(--tb-primary); }
+      .ring-primary { --tw-ring-color: var(--tb-primary); }
+      .bg-primary-foreground { background-color: var(--tb-primary-foreground); }
+      .text-primary-foreground { color: var(--tb-primary-foreground); }
+      .border-primary-foreground { border-color: var(--tb-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--tb-primary-foreground); }
+      .bg-muted { background-color: var(--tb-muted); }
+      .text-muted { color: var(--tb-muted); }
+      .border-muted { border-color: var(--tb-muted); }
+      .ring-muted { --tw-ring-color: var(--tb-muted); }
+      .bg-muted-foreground { background-color: var(--tb-muted-foreground); }
+      .text-muted-foreground { color: var(--tb-muted-foreground); }
+      .border-muted-foreground { border-color: var(--tb-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--tb-muted-foreground); }
+      .bg-border { background-color: var(--tb-border); }
+      .text-border { color: var(--tb-border); }
+      .border-border { border-color: var(--tb-border); }
+      .ring-border { --tw-ring-color: var(--tb-border); }
+      .bg-input { background-color: var(--tb-input); }
+      .text-input { color: var(--tb-input); }
+      .border-input { border-color: var(--tb-input); }
+      .ring-input { --tw-ring-color: var(--tb-input); }
+      .bg-ring { background-color: var(--tb-ring); }
+      .text-ring { color: var(--tb-ring); }
+      .border-ring { border-color: var(--tb-ring); }
+      .ring-ring { --tw-ring-color: var(--tb-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased">
+    <main>
+    </main>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

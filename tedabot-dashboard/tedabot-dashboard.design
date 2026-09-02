@@ -1,0 +1,171 @@
+{
+  "data": [
+    {
+      "id": "page-dashboard",
+      "title": "仪表盘",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1788339055000,
+      "canvasData": {
+        "x": 0,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-695232d9",
+          "measuredAt": 1788343880543
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/dashboard.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-scenarios",
+      "title": "场景记忆",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1788339055000,
+      "canvasData": {
+        "x": 480,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-e9535412",
+          "measuredAt": 1788341945703
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/scenarios.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-roles",
+      "title": "角色卡管理",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1788339055000,
+      "canvasData": {
+        "x": 960,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-991d78b2",
+          "measuredAt": 1788341945703
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/roles.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-trigger",
+      "title": "触发规则",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1788339055000,
+      "canvasData": {
+        "x": 1440,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-b87c5ef0",
+          "measuredAt": 1788341945703
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/trigger.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-proactive",
+      "title": "主动互动",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1788339055000,
+      "canvasData": {
+        "x": 1920,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-eabdae68",
+          "measuredAt": 1788341945703
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/proactive.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-logs",
+      "title": "日志监控",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1788339055000,
+      "canvasData": {
+        "x": 2400,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-7e64e4d7",
+          "measuredAt": 1788341945703
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/logs.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-layouts",
+      "title": "布局方案",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1788339055000,
+      "canvasData": {
+        "x": 2880,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-9b013bb0",
+          "measuredAt": 1788341945703
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/layouts.html",
+        "interactions": []
+      }
+    }
+  ],
+  "config": {
+    "autoLayout": true,
+    "deviceType": "desktop",
+    "projectName": "TedaBot 管理后台",
+    "showEdge": false
+  }
+}

@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>主动互动</title>
+    <style id="theme-vars">
+/* ============================================================
+   TedaBot Dashboard — "Anodized Deep" Color & Type System
+   Inspired by Linear / Raycast dark dashboard aesthetics
+   Single brand hue: Indigo #5e6ad2
+   ============================================================ */
+
+/* ---- Design Tokens (Dark = Default) ---- */
+:root {
+  /* Surface ladder — 4-step dark gradient */
+  --tb-canvas: #08090a;
+  --tb-surface: #0d0d0f;
+  --tb-surface-elevated: #121214;
+  --tb-surface-card: #161619;
+
+  /* Hairlines */
+  --tb-hairline: #24272b;
+  --tb-hairline-soft: rgba(255, 255, 255, 0.06);
+  --tb-hairline-strong: rgba(255, 255, 255, 0.10);
+
+  /* Text */
+  --tb-ink: #f4f4f6;
+  --tb-body: #cdced4;
+  --tb-mute: #8a8f98;
+  --tb-ash: #5c6166;
+
+  /* Brand — single hue: Indigo */
+  --tb-primary: #5e6ad2;
+  --tb-primary-hover: #6d7ade;
+  --tb-primary-deep: #4c54b8;
+  --tb-primary-glow: rgba(94, 106, 210, 0.12);
+  --tb-primary-soft: rgba(94, 106, 210, 0.18);
+  --tb-primary-foreground: #ffffff;
+
+  /* State colors — semantic only */
+  --tb-success: #59d499;
+  --tb-success-soft: rgba(89, 212, 153, 0.12);
+  --tb-warning: #ffc533;
+  --tb-warning-soft: rgba(255, 197, 51, 0.12);
+  --tb-error: #ff6161;
+  --tb-error-soft: rgba(255, 97, 97, 0.12);
+  --tb-info: #57c1ff;
+  --tb-info-soft: rgba(87, 193, 255, 0.12);
+
+  /* Radius scale */
+  --tb-radius-small: 4px;
+  --tb-radius-medium: 8px;
+  --tb-radius-large: 16px;
+  --tb-radius-full: 9999px;
+
+  /* Shadows — floating layers only */
+  --tb-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.24), 0 1px 1px rgba(0, 0, 0, 0.12);
+  --tb-shadow-2: 0 8px 24px -8px rgba(0, 0, 0, 0.48);
+  --tb-shadow-3: 0 24px 60px -20px rgba(0, 0, 0, 0.64);
+
+  /* ---- Semantic Aliases (required by head contract) ---- */
+  --tb-background: var(--tb-canvas);
+  --tb-foreground: var(--tb-ink);
+  --tb-card: var(--tb-surface);
+  --tb-card-foreground: var(--tb-ink);
+  --tb-popover: var(--tb-surface-elevated);
+  --tb-popover-foreground: var(--tb-ink);
+  --tb-muted: var(--tb-surface-elevated);
+  --tb-muted-foreground: var(--tb-mute);
+  --tb-border: var(--tb-hairline);
+  --tb-input: var(--tb-hairline);
+  --tb-ring: #5e6ad2;
+
+  /* Typography */
+  --tb-font-sans: "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --tb-font-mono: "JetBrains Mono", "Geist Mono", "Berkeley Mono", ui-monospace, monospace;
+
+  /* ---- Raw token mirrors for @theme inline ---- */
+  --color-background: #08090a;
+  --color-foreground: #f4f4f6;
+  --color-card: #0d0d0f;
+  --color-card-foreground: #f4f4f6;
+  --color-popover: #121214;
+  --color-popover-foreground: #f4f4f6;
+  --color-primary: #5e6ad2;
+  --color-primary-foreground: #ffffff;
+  --color-muted: #121214;
+  --color-muted-foreground: #8a8f98;
+  --color-border: #24272b;
+  --color-input: #24272b;
+  --color-ring: #5e6ad2;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+}
+
+/* ---- Light mode (optional, not primary) ---- */
+.light {
+  --tb-canvas: #fafafa;
+  --tb-surface: #ffffff;
+  --tb-surface-elevated: #f4f4f5;
+  --tb-surface-card: #ebebed;
+  --tb-hairline: #e4e4e7;
+  --tb-hairline-soft: rgba(0, 0, 0, 0.04);
+  --tb-hairline-strong: rgba(0, 0, 0, 0.08);
+  --tb-ink: #18181b;
+  --tb-body: #3f3f46;
+  --tb-mute: #71717a;
+  --tb-ash: #a1a1aa;
+  --tb-primary: #5e6ad2;
+  --tb-primary-hover: #4c54b8;
+  --tb-primary-deep: #3d44a0;
+  --tb-primary-glow: rgba(94, 106, 210, 0.08);
+  --tb-primary-soft: rgba(94, 106, 210, 0.10);
+  --tb-background: var(--tb-canvas);
+  --tb-foreground: var(--tb-ink);
+  --tb-card: var(--tb-surface);
+  --tb-card-foreground: var(--tb-ink);
+  --tb-popover: var(--tb-surface);
+  --tb-popover-foreground: var(--tb-ink);
+  --tb-muted: var(--tb-surface-elevated);
+  --tb-muted-foreground: var(--tb-mute);
+  --tb-border: var(--tb-hairline);
+  --tb-input: var(--tb-hairline);
+  --tb-ring: #5e6ad2;
+  --color-background: #fafafa;
+  --color-foreground: #18181b;
+  --color-card: #ffffff;
+  --color-card-foreground: #18181b;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #18181b;
+  --color-muted: #f4f4f5;
+  --color-muted-foreground: #71717a;
+  --color-border: #e4e4e7;
+  --color-input: #e4e4e7;
+}
+
+/* ---- Typography Classes ---- */
+.font-sans { font-family: var(--tb-font-sans); }
+.font-mono { font-family: var(--tb-font-mono); }
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Inter distinctive rendering */
+body {
+  font-family: var(--tb-font-sans);
+  font-feature-settings: "ss03", "cv01", "cv03", "cv04", "tnum";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
+}
+
+/* Heading tightening */
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+/* Code / data blocks */
+code, pre, .mono {
+  font-family: var(--tb-font-mono);
+  font-feature-settings: "tnum";
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--tb-background);
+    --color-foreground: var(--tb-foreground);
+    --color-card: var(--tb-card);
+    --color-card-foreground: var(--tb-card-foreground);
+    --color-popover: var(--tb-popover);
+    --color-popover-foreground: var(--tb-popover-foreground);
+    --color-primary: var(--tb-primary);
+    --color-primary-foreground: var(--tb-primary-foreground);
+    --color-muted: var(--tb-muted);
+    --color-muted-foreground: var(--tb-muted-foreground);
+    --color-border: var(--tb-border);
+    --color-input: var(--tb-input);
+    --color-ring: var(--tb-ring);
+    --radius-sm: var(--tb-radius-small);
+    --radius-md: var(--tb-radius-medium);
+    --radius-lg: var(--tb-radius-large);
+  }
+  @layer base {
+    body { background: var(--tb-background); color: var(--tb-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--tb-background); }
+      .text-background { color: var(--tb-background); }
+      .border-background { border-color: var(--tb-background); }
+      .ring-background { --tw-ring-color: var(--tb-background); }
+      .bg-foreground { background-color: var(--tb-foreground); }
+      .text-foreground { color: var(--tb-foreground); }
+      .border-foreground { border-color: var(--tb-foreground); }
+      .ring-foreground { --tw-ring-color: var(--tb-foreground); }
+      .bg-card { background-color: var(--tb-card); }
+      .text-card { color: var(--tb-card); }
+      .border-card { border-color: var(--tb-card); }
+      .ring-card { --tw-ring-color: var(--tb-card); }
+      .bg-card-foreground { background-color: var(--tb-card-foreground); }
+      .text-card-foreground { color: var(--tb-card-foreground); }
+      .border-card-foreground { border-color: var(--tb-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--tb-card-foreground); }
+      .bg-popover { background-color: var(--tb-popover); }
+      .text-popover { color: var(--tb-popover); }
+      .border-popover { border-color: var(--tb-popover); }
+      .ring-popover { --tw-ring-color: var(--tb-popover); }
+      .bg-popover-foreground { background-color: var(--tb-popover-foreground); }
+      .text-popover-foreground { color: var(--tb-popover-foreground); }
+      .border-popover-foreground { border-color: var(--tb-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--tb-popover-foreground); }
+      .bg-primary { background-color: var(--tb-primary); }
+      .text-primary { color: var(--tb-primary); }
+      .border-primary { border-color: var(--tb-primary); }
+      .ring-primary { --tw-ring-color: var(--tb-primary); }
+      .bg-primary-foreground { background-color: var(--tb-primary-foreground); }
+      .text-primary-foreground { color: var(--tb-primary-foreground); }
+      .border-primary-foreground { border-color: var(--tb-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--tb-primary-foreground); }
+      .bg-muted { background-color: var(--tb-muted); }
+      .text-muted { color: var(--tb-muted); }
+      .border-muted { border-color: var(--tb-muted); }
+      .ring-muted { --tw-ring-color: var(--tb-muted); }
+      .bg-muted-foreground { background-color: var(--tb-muted-foreground); }
+      .text-muted-foreground { color: var(--tb-muted-foreground); }
+      .border-muted-foreground { border-color: var(--tb-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--tb-muted-foreground); }
+      .bg-border { background-color: var(--tb-border); }
+      .text-border { color: var(--tb-border); }
+      .border-border { border-color: var(--tb-border); }
+      .ring-border { --tw-ring-color: var(--tb-border); }
+      .bg-input { background-color: var(--tb-input); }
+      .text-input { color: var(--tb-input); }
+      .border-input { border-color: var(--tb-input); }
+      .ring-input { --tw-ring-color: var(--tb-input); }
+      .bg-ring { background-color: var(--tb-ring); }
+      .text-ring { color: var(--tb-ring); }
+      .border-ring { border-color: var(--tb-ring); }
+      .ring-ring { --tw-ring-color: var(--tb-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="font-sans antialiased">
+    <div class="app-shell" data-viewport-mode="app-shell">
+
+        <!-- ============ SIDEBAR ============ -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-mark">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2a3 3 0 0 0-3 3v1a3 3 0 0 0-3 3v1a3 3 0 0 0 0 6v1a3 3 0 0 0 3 3v1a3 3 0 0 0 6 0v-1a3 3 0 0 0 3-3v-1a3 3 0 0 0 0-6v-1a3 3 0 0 0-3-3V5a3 3 0 0 0-3-3z"/>
+                        </svg>
+                    </div>
+                    <span class="logo-text">TedaBot</span>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" data-dom-id="nav-dashboard" class="nav-item">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+                    <span>仪表盘</span>
+                </a>
+                <a href="scenarios.html" data-dom-id="nav-scenarios" class="nav-item">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.96 4 4 0 0 0 .556 6.588A4 4 0 0 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.96 4 4 0 0 1-.556 6.588A4 4 0 0 1 12 18Z"/><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/><path d="M17.599 6.394a4 4 0 0 1 2.526 5.96"/></svg>
+                    <span>场景记忆</span>
+                </a>
+                <a href="roles.html" data-dom-id="nav-roles" class="nav-item">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <span>角色卡管理</span>
+                </a>
+                <a href="trigger.html" data-dom-id="nav-trigger" class="nav-item">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>
+                    <span>触发规则</span>
+                </a>
+                <a href="proactive.html" data-dom-id="nav-proactive" class="nav-item active">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg>
+                    <span>主动互动</span>
+                </a>
+                <a href="logs.html" data-dom-id="nav-logs" class="nav-item">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" x2="20" y1="19" y2="19"/></svg>
+                    <span>日志监控</span>
+                </a>
+                <a href="layouts.html" data-dom-id="nav-layouts" class="nav-item">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><line x1="9" x2="9" y1="3" y2="21"/><line x1="15" x2="15" y1="3" y2="21"/></svg>
+                    <span>布局方案</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="bot-status">
+                    <div class="bot-status-header">
+                        <div class="bot-status-dot"></div>
+                        <span class="bot-status-name">TedaBot</span>
+                    </div>
+                    <div class="bot-status-meta">已连接 · 运行 3h 24m</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ============ TOPBAR ============ -->
+        <header class="topbar">
+            <h1 class="page-title">主动互动</h1>
+            <div class="topbar-search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <input type="search" placeholder="搜索场景、角色卡、日志...">
+            </div>
+            <div class="status-pills">
+                <div class="status-pill">
+                    <div class="status-pill-dot" style="background: var(--tb-success)"></div>
+                    <span>已连接</span>
+                </div>
+                <div class="status-pill">
+                    <span>3h 24m</span>
+                </div>
+            </div>
+            <div class="avatar">
+                <div class="avatar-circle">T</div>
+            </div>
+        </header>
+
+        <!-- ============ MAIN CONTENT ============ -->
+        <main class="main-content overflow-y-auto" data-scroll-region="primary">
+
+            <!-- ---- Page Intro ---- -->
+            <div class="pa-page-head">
+                <h2>主动互动</h2>
+                <p>配置机器人主动发言的触发方式、间隔节奏与频率上限，避免过度打扰同时保持自然参与。</p>
+            </div>
+
+            <!-- ---- Mode Selection Row ---- -->
+            <section class="pa-mode-grid" aria-label="主动互动模式选择">
+
+                <!-- Mode 1: Keyword (active) -->
+                <article class="pa-mode-card active" data-mode="keyword" tabindex="0">
+                    <div class="pa-mode-head">
+                        <div class="pa-mode-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6"/><path d="M9 16h6"/><path d="M9 8h6"/><rect width="18" height="18" x="3" y="3" rx="2"/></svg>
+                        </div>
+                        <div class="pa-mode-indicator" aria-hidden="true"></div>
+                    </div>
+                    <div class="pa-mode-body">
+                        <span class="pa-mode-name">关键词触发</span>
+                        <span class="pa-mode-desc">当对话中出现指定关键词时，机器人主动发起互动。规则明确、可控性强。</span>
+                        <span class="pa-mode-tag on">当前模式</span>
+                    </div>
+                </article>
+
+                <!-- Mode 2: Context -->
+                <article class="pa-mode-card" data-mode="context" tabindex="0">
+                    <div class="pa-mode-head">
+                        <div class="pa-mode-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 0-4 4 4 4 0 0 0 .5 2A4 4 0 0 0 6 12a4 4 0 0 0 2.5 4A4 4 0 0 0 12 22a4 4 0 0 0 3.5-6A4 4 0 0 0 18 12a4 4 0 0 0-2.5-4A4 4 0 0 0 12 2Z"/><path d="M12 6v12"/></svg>
+                        </div>
+                        <div class="pa-mode-indicator" aria-hidden="true"></div>
+                    </div>
+                    <div class="pa-mode-body">
+                        <span class="pa-mode-name">上下文感知</span>
+                        <span class="pa-mode-desc">AI 分析对话上下文与情绪，在合适的时机主动介入。更自然，但消耗更多算力。</span>
+                        <span class="pa-mode-tag off">未启用</span>
+                    </div>
+                </article>
+
+                <!-- Mode 3: Hybrid -->
+                <article class="pa-mode-card" data-mode="hybrid" tabindex="0">
+                    <div class="pa-mode-head">
+                        <div class="pa-mode-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>
+                        </div>
+                        <div class="pa-mode-indicator" aria-hidden="true"></div>
+                    </div>
+                    <div class="pa-mode-body">
+                        <span class="pa-mode-name">混合模式</span>
+                        <span class="pa-mode-desc">关键词与上下文分析结合，覆盖最广。关键词命中即触发，同时由 AI 把握时机。</span>
+                        <span class="pa-mode-tag off">未启用</span>
+                    </div>
+                </article>
+
+            </section>
+
+            <!-- ---- Configuration Form Sections ---- -->
+            <div class="pa-config-stack">
+
+                <!-- Section 1: 触发阈值 -->
+                <section class="pa-section">
+                    <div class="pa-section-head">
+                        <div class="pa-section-head-left">
+                            <span class="pa-section-title">触发阈值</span>
+                            <span class="pa-section-subtitle">控制关键词与上下文的匹配灵敏度</span>
+                        </div>
+                        <span class="pa-badge active"><span class="pa-badge-dot"></span>已启用</span>
+                    </div>
+                    <div class="pa-section-body">
+
+                        <div class="pa-slider-block">
+                            <div class="pa-slider-header">
+                                <span class="pa-slider-label">关键词匹配阈值</span>
+                                <span class="pa-slider-value tabular-nums">60%</span>
+                            </div>
+                            <input type="range" class="pa-range" min="0" max="100" step="1" value="60" aria-label="关键词匹配阈值">
+                            <p class="pa-helper">阈值越高，匹配越严格，只有高度相关的关键词才会触发主动互动。建议保持在 50%–70% 之间。</p>
+                        </div>
+
+                        <div class="pa-toggle-row">
+                            <div class="pa-toggle-info">
+                                <span class="pa-toggle-label">模糊匹配</span>
+                                <span class="pa-toggle-desc">允许近义词、错别字与变体触发，扩大命中范围</span>
+                            </div>
+                            <div class="pa-toggle on" role="switch" aria-checked="true" tabindex="0"></div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- Section 2: 发言间隔 -->
+                <section class="pa-section">
+                    <div class="pa-section-head">
+                        <div class="pa-section-head-left">
+                            <span class="pa-section-title">发言间隔</span>
+                            <span class="pa-section-subtitle">两次主动发言之间的时间范围</span>
+                        </div>
+                        <span class="pa-badge active"><span class="pa-badge-dot"></span>已启用</span>
+                    </div>
+                    <div class="pa-section-body">
+
+                        <div class="pa-form-row-2">
+                            <div class="pa-num-row">
+                                <span class="pa-num-label">最小间隔</span>
+                                <div style="display:flex;align-items:center;gap:6px;">
+                                    <input type="number" class="pa-num-input tabular-nums" value="30" min="0" step="1" aria-label="最小间隔(秒)">
+                                    <span class="pa-num-suffix">秒</span>
+                                </div>
+                            </div>
+                            <div class="pa-num-row">
+                                <span class="pa-num-label">最大间隔</span>
+                                <div style="display:flex;align-items:center;gap:6px;">
+                                    <input type="number" class="pa-num-input tabular-nums" value="300" min="0" step="1" aria-label="最大间隔(秒)">
+                                    <span class="pa-num-suffix">秒</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="pa-helper">机器人将在最小与最大间隔之间随机选择一个时长后再主动发言，避免节奏机械化。最大值必须大于最小值。</p>
+
+                    </div>
+                </section>
+
+                <!-- Section 3: 频率限制 -->
+                <section class="pa-section">
+                    <div class="pa-section-head">
+                        <div class="pa-section-head-left">
+                            <span class="pa-section-title">频率限制</span>
+                            <span class="pa-section-subtitle">防止机器人过度发言打扰群组</span>
+                        </div>
+                        <span class="pa-badge warn"><span class="pa-badge-dot"></span>接近上限</span>
+                    </div>
+                    <div class="pa-section-body">
+
+                        <div class="pa-form-row-2">
+                            <div class="pa-num-row">
+                                <span class="pa-num-label">每小时上限</span>
+                                <div style="display:flex;align-items:center;gap:6px;">
+                                    <input type="number" class="pa-num-input tabular-nums" value="10" min="0" step="1" aria-label="每小时上限">
+                                    <span class="pa-num-suffix">条/时</span>
+                                </div>
+                            </div>
+                            <div class="pa-num-row">
+                                <span class="pa-num-label">每日上限</span>
+                                <div style="display:flex;align-items:center;gap:6px;">
+                                    <input type="number" class="pa-num-input tabular-nums" value="50" min="0" step="1" aria-label="每日上限">
+                                    <span class="pa-num-suffix">条/日</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pa-progress-block">
+                            <div class="pa-progress-head">
+                                <span class="pa-progress-label">今日用量</span>
+                                <span class="pa-progress-value tabular-nums">48 / 50</span>
+                            </div>
+                            <div class="pa-progress-track">
+                                <div class="pa-progress-fill warn" style="width: 96%;"></div>
+                            </div>
+                            <p class="pa-helper">已达每日上限的 96%，剩余 2 条额度。超出后主动发言将自动暂停至次日 0 点重置。</p>
+                        </div>
+
+                        <div class="pa-progress-block">
+                            <div class="pa-progress-head">
+                                <span class="pa-progress-label">本小时用量</span>
+                                <span class="pa-progress-value tabular-nums">4 / 10</span>
+                            </div>
+                            <div class="pa-progress-track">
+                                <div class="pa-progress-fill" style="width: 40%;"></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- Section 4: 上下文设置 (conditional — dimmed since keyword mode active) -->
+                <section class="pa-section context-hidden" aria-label="上下文设置（需切换模式）">
+                    <div class="pa-section-head">
+                        <div class="pa-section-head-left">
+                            <span class="pa-section-title">上下文设置</span>
+                            <span class="pa-section-subtitle">仅在「上下文感知」或「混合模式」下生效</span>
+                        </div>
+                        <span class="pa-badge muted"><span class="pa-badge-dot"></span>未启用</span>
+                    </div>
+                    <div class="pa-section-body">
+
+                        <div class="pa-slider-block">
+                            <div class="pa-slider-header">
+                                <span class="pa-slider-label">上下文分析深度</span>
+                                <span class="pa-slider-value tabular-nums">3 / 5</span>
+                            </div>
+                            <input type="range" class="pa-range" min="1" max="5" step="1" value="3" aria-label="上下文分析深度">
+                            <p class="pa-helper">数值越大，AI 会回溯更多历史消息判断介入时机，准确度更高但消耗更多 token。</p>
+                        </div>
+
+                        <div class="pa-toggle-row">
+                            <div class="pa-toggle-info">
+                                <span class="pa-toggle-label">情绪感知</span>
+                                <span class="pa-toggle-desc">识别对话情绪走向，在气氛合适时才主动发言</span>
+                            </div>
+                            <div class="pa-toggle off" role="switch" aria-checked="false" tabindex="0"></div>
+                        </div>
+
+                        <div class="pa-slider-block" style="gap: 8px;">
+                            <span class="pa-slider-label" style="margin-bottom: 2px;">自定义提示词</span>
+                            <textarea class="pa-textarea" placeholder="例如：你是一个热心的群成员，只在有人提问或话题冷场时自然地加入讨论..." aria-label="自定义提示词"></textarea>
+                            <p class="pa-helper">作为上下文分析的引导前缀，会影响 AI 判断时机与发言风格。</p>
+                        </div>
+
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- ---- Save Bar ---- -->
+            <div class="pa-save-bar">
+                <button class="pa-btn pa-btn-secondary" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                    重置
+                </button>
+                <button class="pa-btn pa-btn-primary" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.21 12.79a9 9 0 1 1-9-9 9 9 0 0 1 9 9z"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
+                    保存配置
+                </button>
+            </div>
+
+        </main>
+
+    </div>
+    <script>lucide.createIcons();</script>
+
+    <style id="critical-layout">
+/* ============================================================
+   TedaBot Dashboard — Critical Layout CSS
+   Static, responsive-safe, no JavaScript required
+   ============================================================ */
+
+/* ---- Reset ---- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--tb-canvas);
+  color: var(--tb-ink);
+  font-family: var(--tb-font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---- Scrollbar styling ---- */
+.main-content::-webkit-scrollbar,
+.scenario-list::-webkit-scrollbar,
+.sidebar-nav::-webkit-scrollbar { width: 6px; }
+.main-content::-webkit-scrollbar-track,
+.scenario-list::-webkit-scrollbar-track,
+.sidebar-nav::-webkit-scrollbar-track { background: transparent; }
+.main-content::-webkit-scrollbar-thumb,
+.scenario-list::-webkit-scrollbar-thumb,
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background: var(--tb-hairline);
+  border-radius: var(--tb-radius-full);
+}
+.main-content::-webkit-scrollbar-thumb:hover,
+.scenario-list::-webkit-scrollbar-thumb:hover,
+.sidebar-nav::-webkit-scrollbar-thumb:hover {
+  background: var(--tb-ash);
+}
+
+/* ---- App Shell Grid ---- */
+.app-shell {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  grid-template-rows: 56px 1fr;
+  grid-template-areas:
+    "sidebar topbar"
+    "sidebar main";
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+.sidebar {
+  grid-area: sidebar;
+  background: var(--tb-surface);
+  border-right: 1px solid var(--tb-hairline);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.sidebar-header {
+  height: 56px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--tb-hairline);
+  flex-shrink: 0;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-mark {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--tb-radius-medium);
+  background: var(--tb-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logo-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--tb-ink);
+  letter-spacing: -0.02em;
+}
+
+.sidebar-nav {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: var(--tb-radius-small);
+  color: var(--tb-mute);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  position: relative;
+  transition: background 0.12s ease, color 0.12s ease;
+  cursor: pointer;
+}
+
+.nav-item svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.nav-item:hover {
+  background: var(--tb-surface-elevated);
+  color: var(--tb-body);
+}
+
+.nav-item.active {
+  color: var(--tb-ink);
+  background: var(--tb-surface-elevated);
+}
+
+.nav-item.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 7px;
+  bottom: 7px;
+  width: 2px;
+  background: var(--tb-primary);
+  border-radius: var(--tb-radius-full);
+}
+
+.sidebar-footer {
+  padding: 12px;
+  border-top: 1px solid var(--tb-hairline);
+  flex-shrink: 0;
+}
+
+.bot-status {
+  background: var(--tb-surface-elevated);
+  border: 1px solid var(--tb-hairline);
+  border-radius: var(--tb-radius-medium);
+  padding: 12px;
+}
+
+.bot-status-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.bot-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--tb-radius-full);
+  background: var(--tb-success);
+  box-shadow: 0 0 0 3px var(--tb-success-soft);
+  flex-shrink: 0;
+}
+
+.bot-status-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tb-ink);
+}
+
+.bot-status-meta {
+  font-size: 11px;
+  color: var(--tb-mute);
+}
+
+/* ============================================================
+   TOPBAR
+   ============================================================ */
+.topbar {
+  grid-area: topbar;
+  background: var(--tb-surface);
+  border-bottom: 1px solid var(--tb-hairline);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 24px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+.page-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--tb-ink);
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.topbar-search {
+  position: relative;
+  margin-left: auto;
+  width: 260px;
+}
+
+.topbar-search svg {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  color: var(--tb-mute);
+  pointer-events: none;
+}
+
+.topbar-search input {
+  width: 100%;
+  height: 32px;
+  background: var(--tb-surface-elevated);
+  border: 1px solid var(--tb-hairline);
+  border-radius: var(--tb-radius-small);
+  padding: 0 10px 0 32px;
+  font-size: 12px;
+  color: var(--tb-body);
+  font-family: var(--tb-font-sans);
+  outline: none;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.topbar-search input::placeholder {
+  color: var(--tb-ash);
+}
+
+.topbar-search input:focus {
+  border-color: var(--tb-primary);
+  box-shadow: 0 0 0 2px var(--tb-primary-glow);
+}
+
+.status-pills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 10px;
+  background: var(--tb-surface-elevated);
+  border: 1px solid var(--tb-hairline);
+  border-radius: var(--tb-radius-full);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--tb-body);
+  white-space: nowrap;
+}
+
+.status-pill-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--tb-radius-full);
+  flex-shrink: 0;
+}
+
+.avatar {
+  margin-left: 4px;
+  flex-shrink: 0;
+}
+
+.avatar-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--tb-radius-full);
+  background: var(--tb-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--tb-primary-foreground);
+}
+
+/* ============================================================
+   MAIN CONTENT
+   ============================================================ */
+.main-content {
+  grid-area: main;
+  background: var(--tb-canvas);
+  overflow-y: auto;
+  padding: 24px;
+  min-height: 0;
+}
+
+/* ---- KPI Row ---- */
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.kpi-card {
+  background: var(--tb-surface);
+  border: 1px solid var(--tb-hairline);
+  border-radius: var(--tb-radius-medium);
+  padding: 20px;
+}
+
+.kpi-label {
+  font-size: 13px;
+  color: var(--tb-mute);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.kpi-value {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--tb-ink);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+
+.kpi-subtitle {
+  font-size: 11px;
+  color: var(--tb-ash);
+}
+
+/* ---- Card (shared) ---- */
+.card {
+  background: var(--tb-surface);
+  border: 1px solid var(--tb-hairline);
+  border-radius: var(--tb-radius-medium);
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--tb-hairline);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tb-ink);
+  letter-spacing: -0.01em;
+}
+
+.card-count {
+  font-size: 11px;
+  color: var(--tb-mute);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* ---- Dual Column Section ---- */
+.dual-section {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+/* ---- Scenario List ---- */
+.scenario-list {
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.scenario-row {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 10px;
+  border-bottom: 1px solid var(--tb-hairline);
+  transition: background 0.12s ease;
+}
+
+.scenario-row:last-child {
+  border-bottom: none;
+}
+
+.scenario-row:hover {
+  background: var(--tb-surface-elevated);
+}
+
+.scenario-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--tb-radius-full);
+  flex-shrink: 0;
+}
+
+.scenario-dot.success {
+  background: var(--tb-success);
+  box-shadow: 0 0 0 2px var(--tb-success-soft);
+}
+
+.scenario-dot.mute {
+  background: var(--tb-ash);
+}
+
+.scenario-name {
+  font-size: 13px;
+  color: var(--tb-ink);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  flex-shrink: 1;
+}
+
+.scenario-badge {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: var(--tb-radius-small);
+  background: var(--tb-surface-elevated);
+  border: 1px solid var(--tb-hairline);
+  color: var(--tb-mute);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.scenario-meta {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 11px;
+  color: var(--tb-mute);
+  flex-shrink: 0;
+}
+
+.scenario-meta span {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* ---- Queue Status ---- */
+.queue-list {
+  padding: 6px 0;
+}
+
+.queue-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 16px;
+  transition: background 0.12s ease;
+}
+
+.queue-row:hover {
+  background: var(--tb-surface-elevated);
+}
+
+.queue-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--tb-radius-full);
+  flex-shrink: 0;
+}
+
+.queue-dot.warning {
+  background: var(--tb-warning);
+  box-shadow: 0 0 0 2px var(--tb-warning-soft);
+}
+
+.queue-dot.success {
+  background: var(--tb-success);
+  box-shadow: 0 0 0 2px var(--tb-success-soft);
+}
+
+.queue-dot.error {
+  background: var(--tb-error);
+  box-shadow: 0 0 0 2px var(--tb-error-soft);
+}
+
+.queue-dot.mute {
+  background: var(--tb-ash);
+}
+
+.queue-label {
+  font-size: 13px;
+  color: var(--tb-body);
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.queue-label-en {
+  font-size: 10px;
+  color: var(--tb-ash);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.queue-count {
+  margin-left: auto;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--tb-ink);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* ---- Activity Timeline ---- */
+.timeline {
+  padding: 16px;
+}
+
+.timeline-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 6px 0;
+  position: relative;
+}
+
+.timeline-item:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 24px;
+  bottom: -6px;
+  width: 1px;
+  background: var(--tb-hairline);
+}
+
+.timeline-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: var(--tb-radius-full);
+  margin-top: 6px;
+  flex-shrink: 0;
+  border: 2px solid var(--tb-surface);
+  position: relative;
+  z-index: 1;
+}
+
+.timeline-dot.info { background: var(--tb-info); }
+.timeline-dot.warn { background: var(--tb-warning); }
+.timeline-dot.error { background: var(--tb-error); }
+
+.timeline-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  flex-wrap: wrap;
+}
+
+.timeline-time {
+  font-family: var(--tb-font-mono);
+  font-size: 11px;
+  color: var(--tb-mute);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  flex-shrink: 0;
+}
+
+.timeline-level {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: var(--tb-radius-small);
+  flex-shrink: 0;
+  letter-spacing: 0.03em;
+  line-height: 1.4;
+}
+
+.timeline-level.info {
+  background: var(--tb-info-soft);
+  color: var(--tb-info);
+}
+
+.timeline-level.warn {
+  background: var(--tb-warning-soft);
+  color: var(--tb-warning);
+}
+
+.timeline-level.error {
+  background: var(--tb-error-soft);
+  color: var(--tb-error);
+}
+
+.timeline-message {
+  font-size: 12px;
+  color: var(--tb-body);
+  line-height: 1.5;
+}
+
+/* ---- Responsive fallback ---- */
+@media (max-width: 960px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "topbar"
+      "main";
+  }
+  .sidebar { display: none; }
+  .kpi-row { grid-template-columns: repeat(2, 1fr); }
+  .dual-section { grid-template-columns: 1fr; }
+  .topbar-search { width: 180px; }
+}
+
+@media (max-width: 560px) {
+  .kpi-row { grid-template-columns: 1fr; }
+  .topbar-search { display: none; }
+  .status-pills { display: none; }
+}
+
+/* ============================================================
+   PAGE: 主动互动 (Proactive Interaction) — page-specific CSS
+   ============================================================ */
+
+/* ---- Page intro header ---- */
+.pa-page-head {
+  margin-bottom: 20px;
+}
+.pa-page-head h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--tb-ink);
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+.pa-page-head p {
+  font-size: 12px;
+  color: var(--tb-mute);
+  line-height: 1.5;
+}
+
+/* ---- Mode selection row ---- */
+.pa-mode-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.pa-mode-card {
+  position: relative;
+  background: var(--tb-surface);
+  border: 1px solid var(--tb-hairline);
+  border-radius: var(--tb-radius-medium);
+  padding: 20px;
+  cursor: pointer;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.pa-mode-card:hover {
+  border-color: var(--tb-hairline-strong);
+  background: var(--tb-surface-elevated);
+}
+.pa-mode-card.active {
+  border-color: var(--tb-primary);
+  box-shadow: 0 0 0 2px var(--tb-primary-glow), 0 8px 24px -12px var(--tb-primary-soft);
+  background: var(--tb-surface);
+}
+.pa-mode-card.active::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--tb-radius-medium);
+  background: linear-gradient(180deg, var(--tb-primary-soft) 0%, transparent 40%);
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.pa-mode-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.pa-mode-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--tb-radius-medium);
+  background: var(--tb-surface-elevated);
+  border: 1px solid var(--tb-hairline);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--tb-mute);
+  flex-shrink: 0;
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+.pa-mode-icon svg {
+  width: 18px;
+  height: 18px;
+}
+.pa-mode-card.active .pa-mode-icon {
+  background: var(--tb-primary-soft);
+  border-color: var(--tb-primary);
+  color: var(--tb-primary);
+}
+
+/* Visual indicator: radio-style dot */
+.pa-mode-indicator {
+  width: 16px;
+  height: 16px;
+  border-radius: var(--tb-radius-full);
+  border: 1.5px solid var(--tb-hairline-strong);
+  background: transparent;
+  flex-shrink: 0;
+  position: relative;
+  transition: border-color 0.12s ease, background 0.12s ease;
+  z-index: 1;
+}
+.pa-mode-card.active .pa-mode-indicator {
+  border-color: var(--tb-primary);
+  background: var(--tb-primary);
+}
+.pa-mode-card.active .pa-mode-indicator::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+  height: 6px;
+  border-radius: var(--tb-radius-full);
+  background: var(--tb-primary-foreground);
+}
+
+.pa-mode-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+  z-index: 1;
+}
+.pa-mode-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--tb-ink);
+  letter-spacing: -0.01em;
+}
+.pa-mode-desc {
+  font-size: 12px;
+  color: var(--tb-mute);
+  line-height: 1.5;
+}
+
+.pa-mode-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: var(--tb-radius-small);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  margin-top: 2px;
+  width: fit-content;
+}
+.pa-mode-tag.on {
+  background: var(--tb-primary-soft);
+  color: var(--tb-primary);
+}
+.pa-mode-tag.off {
+  background: var(--tb-surface-elevated);
+  color: var(--tb-ash);
+}
+
+/* ---- Config section stack ---- */
+.pa-config-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.pa-section {
+  background: var(--tb-surface);
+  border: 1px solid var(--tb-hairline);
+  border-radius: var(--tb-radius-medium);
+  overflow: hidden;
+}
+.pa-section-head {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--tb-hairline);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.pa-section-head-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.pa-section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tb-ink);
+  letter-spacing: -0.01em;
+}
+.pa-section-subtitle {
+  font-size: 11px;
+  color: var(--tb-mute);
+}
+.pa-section-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ---- Section badge ---- */
+.pa-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--tb-radius-full);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.pa-badge.active {
+  background: var(--tb-success-soft);
+  color: var(--tb-success);
+}
+.pa-badge.muted {
+  background: var(--tb-surface-elevated);
+  color: var(--tb-ash);
+}
+.pa-badge.warn {
+  background: var(--tb-warning-soft);
+  color: var(--tb-warning);
+}
+.pa-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--tb-radius-full);
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+/* ---- Slider ---- */
+.pa-slider-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.pa-slider-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.pa-slider-label {
+  font-size: 13px;
+  color: var(--tb-body);
+  font-weight: 500;
+}
+.pa-slider-value {
+  font-family: var(--tb-font-mono);
+  font-size: 13px;
+  color: var(--tb-ink);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  background: var(--tb-surface-elevated);
+  border: 1px solid var(--tb-hairline);
+  border-radius: var(--tb-radius-small);
+  padding: 1px 8px;
+  min-width: 52px;
+  text-align: right;
+}
+.pa-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  background: var(--tb-surface-elevated);
+  border-radius: var(--tb-radius-full);
+  outline: none;
+  cursor: pointer;
+}
+.pa-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--tb-radius-full);
+  background: var(--tb-primary);
+  border: 2px solid var(--tb-surface);
+  cursor: pointer;
+  box-shadow: 0 0 0 1px var(--tb-primary);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.pa-range::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 0 1px var(--tb-primary), 0 0 0 6px var(--tb-primary-glow);
+}
+.pa-range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: var(--tb-radius-full);
+  background: var(--tb-primary);
+  border: 2px solid var(--tb-surface);
+  cursor: pointer;
+  box-shadow: 0 0 0 1px var(--tb-primary);
+}
+.pa-helper {
+  font-size: 11px;
+  color: var(--tb-mute);
+  line-height: 1.5;
+}
+
+/* ---- Toggle switch (dark) ---- */
+.pa-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--tb-hairline-soft);
+}
+.pa-toggle-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.pa-toggle-row:first-of-type {
+  padding-top: 0;
+}
+.pa-toggle-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.pa-toggle-label {
+  font-size: 13px;
+  color: var(--tb-body);
+  font-weight: 500;
+}
+.pa-toggle-desc {
+  font-size: 11px;
+  color: var(--tb-mute);
+  line-height: 1.5;
+}
+.pa-toggle {
+  width: 38px;
+  height: 22px;
+  border-radius: var(--tb-radius-full);
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+  flex-shrink: 0;
+  border: 1px solid var(--tb-hairline);
+}
+.pa-toggle::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--tb-radius-full);
+  background: var(--tb-ink);
+  top: 50%;
+  left: 3px;
+  transform: translateY(-50%);
+  transition: transform 0.12s ease, background 0.12s ease;
+}
+.pa-toggle.on {
+  background: var(--tb-primary);
+  border-color: var(--tb-primary);
+}
+.pa-toggle.on::after {
+  transform: translate(16px, -50%);
+  background: var(--tb-primary-foreground);
+}
+.pa-toggle.off {
+  background: var(--tb-surface-card);
+}
+
+/* ---- Number input (matches topbar-search input style) ---- */
+.pa-num-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.pa-num-label {
+  font-size: 13px;
+  color: var(--tb-body);
+  font-weight: 500;
+}
+.pa-num-input {
+  width: 96px;
+  height: 32px;
+  background: var(--tb-surface-elevated);
+  border: 1px solid var(--tb-hairline);
+  border-radius: var(--tb-radius-small);
+  padding: 0 10px;
+  font-size: 12px;
+  color: var(--tb-body);
+  font-family: var(--tb-font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  outline: none;
+  text-align: right;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+.pa-num-input::placeholder {
+  color: var(--tb-ash);
+}
+.pa-num-input:focus {
+  border-color: var(--tb-primary);
+  box-shadow: 0 0 0 2px var(--tb-primary-glow);
+}
+.pa-num-suffix {
+  font-size: 11px;
+  color: var(--tb-mute);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Progress bar ---- */
+.pa-progress-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.pa-progress-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+}
+.pa-progress-label {
+  color: var(--tb-body);
+}
+.pa-progress-value {
+  color: var(--tb-ink);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  font-weight: 600;
+}
+.pa-progress-track {
+  width: 100%;
+  height: 6px;
+  background: var(--tb-surface-elevated);
+  border-radius: var(--tb-radius-full);
+  overflow: hidden;
+}
+.pa-progress-fill {
+  height: 100%;
+  background: var(--tb-primary);
+  border-radius: var(--tb-radius-full);
+  transition: width 0.12s ease;
+}
+.pa-progress-fill.warn {
+  background: var(--tb-warning);
+}
+
+/* ---- Textarea ---- */
+.pa-textarea {
+  width: 100%;
+  min-height: 80px;
+  resize: vertical;
+  background: var(--tb-surface-elevated);
+  border: 1px solid var(--tb-hairline);
+  border-radius: var(--tb-radius-small);
+  padding: 8px 10px;
+  font-size: 12px;
+  color: var(--tb-body);
+  font-family: var(--tb-font-sans);
+  line-height: 1.5;
+  outline: none;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+.pa-textarea::placeholder {
+  color: var(--tb-ash);
+}
+.pa-textarea:focus {
+  border-color: var(--tb-primary);
+  box-shadow: 0 0 0 2px var(--tb-primary-glow);
+}
+
+/* ---- Two-column form row ---- */
+.pa-form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* ---- Disabled / contextual section ---- */
+.pa-section.context-hidden {
+  opacity: 0.55;
+}
+.pa-section.context-hidden .pa-section-body {
+  pointer-events: none;
+}
+
+/* ---- Save bar ---- */
+.pa-save-bar {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 16px 0 0;
+  margin-top: 16px;
+  background: linear-gradient(180deg, transparent 0%, var(--tb-canvas) 30%);
+}
+.pa-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 36px;
+  border-radius: var(--tb-radius-medium);
+  padding: 0 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--tb-font-sans);
+  border: none;
+  transition: background-color 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+.pa-btn svg {
+  width: 14px;
+  height: 14px;
+}
+.pa-btn-primary {
+  background: var(--tb-primary);
+  color: var(--tb-primary-foreground);
+}
+.pa-btn-primary:hover {
+  background: var(--tb-primary-hover);
+}
+.pa-btn-secondary {
+  background: var(--tb-surface-elevated);
+  color: var(--tb-body);
+  border: 1px solid var(--tb-hairline);
+}
+.pa-btn-secondary:hover {
+  border-color: var(--tb-hairline-strong);
+  color: var(--tb-ink);
+}
+
+/* ---- Responsive: mode cards stack below 768px ---- */
+@media (max-width: 768px) {
+  .pa-mode-grid {
+    grid-template-columns: 1fr;
+  }
+  .pa-form-row-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+    </style>
+</body>
+</html>

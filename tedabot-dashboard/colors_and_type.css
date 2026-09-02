@@ -1,0 +1,161 @@
+/* ============================================================
+   TedaBot Dashboard — "Anodized Deep" Color & Type System
+   Inspired by Linear / Raycast dark dashboard aesthetics
+   Single brand hue: Indigo #5e6ad2
+   ============================================================ */
+
+/* ---- Design Tokens (Dark = Default) ---- */
+:root {
+  /* Surface ladder — 4-step dark gradient */
+  --tb-canvas: #08090a;
+  --tb-surface: #0d0d0f;
+  --tb-surface-elevated: #121214;
+  --tb-surface-card: #161619;
+
+  /* Hairlines */
+  --tb-hairline: #24272b;
+  --tb-hairline-soft: rgba(255, 255, 255, 0.06);
+  --tb-hairline-strong: rgba(255, 255, 255, 0.10);
+
+  /* Text */
+  --tb-ink: #f4f4f6;
+  --tb-body: #cdced4;
+  --tb-mute: #8a8f98;
+  --tb-ash: #5c6166;
+
+  /* Brand — single hue: Indigo */
+  --tb-primary: #5e6ad2;
+  --tb-primary-hover: #6d7ade;
+  --tb-primary-deep: #4c54b8;
+  --tb-primary-glow: rgba(94, 106, 210, 0.12);
+  --tb-primary-soft: rgba(94, 106, 210, 0.18);
+  --tb-primary-foreground: #ffffff;
+
+  /* State colors — semantic only */
+  --tb-success: #59d499;
+  --tb-success-soft: rgba(89, 212, 153, 0.12);
+  --tb-warning: #ffc533;
+  --tb-warning-soft: rgba(255, 197, 51, 0.12);
+  --tb-error: #ff6161;
+  --tb-error-soft: rgba(255, 97, 97, 0.12);
+  --tb-info: #57c1ff;
+  --tb-info-soft: rgba(87, 193, 255, 0.12);
+
+  /* Radius scale */
+  --tb-radius-small: 4px;
+  --tb-radius-medium: 8px;
+  --tb-radius-large: 16px;
+  --tb-radius-full: 9999px;
+
+  /* Shadows — floating layers only */
+  --tb-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.24), 0 1px 1px rgba(0, 0, 0, 0.12);
+  --tb-shadow-2: 0 8px 24px -8px rgba(0, 0, 0, 0.48);
+  --tb-shadow-3: 0 24px 60px -20px rgba(0, 0, 0, 0.64);
+
+  /* ---- Semantic Aliases (required by head contract) ---- */
+  --tb-background: var(--tb-canvas);
+  --tb-foreground: var(--tb-ink);
+  --tb-card: var(--tb-surface);
+  --tb-card-foreground: var(--tb-ink);
+  --tb-popover: var(--tb-surface-elevated);
+  --tb-popover-foreground: var(--tb-ink);
+  --tb-muted: var(--tb-surface-elevated);
+  --tb-muted-foreground: var(--tb-mute);
+  --tb-border: var(--tb-hairline);
+  --tb-input: var(--tb-hairline);
+  --tb-ring: #5e6ad2;
+
+  /* Typography */
+  --tb-font-sans: "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --tb-font-mono: "JetBrains Mono", "Geist Mono", "Berkeley Mono", ui-monospace, monospace;
+
+  /* ---- Raw token mirrors for @theme inline ---- */
+  --color-background: #08090a;
+  --color-foreground: #f4f4f6;
+  --color-card: #0d0d0f;
+  --color-card-foreground: #f4f4f6;
+  --color-popover: #121214;
+  --color-popover-foreground: #f4f4f6;
+  --color-primary: #5e6ad2;
+  --color-primary-foreground: #ffffff;
+  --color-muted: #121214;
+  --color-muted-foreground: #8a8f98;
+  --color-border: #24272b;
+  --color-input: #24272b;
+  --color-ring: #5e6ad2;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+}
+
+/* ---- Light mode (optional, not primary) ---- */
+.light {
+  --tb-canvas: #fafafa;
+  --tb-surface: #ffffff;
+  --tb-surface-elevated: #f4f4f5;
+  --tb-surface-card: #ebebed;
+  --tb-hairline: #e4e4e7;
+  --tb-hairline-soft: rgba(0, 0, 0, 0.04);
+  --tb-hairline-strong: rgba(0, 0, 0, 0.08);
+  --tb-ink: #18181b;
+  --tb-body: #3f3f46;
+  --tb-mute: #71717a;
+  --tb-ash: #a1a1aa;
+  --tb-primary: #5e6ad2;
+  --tb-primary-hover: #4c54b8;
+  --tb-primary-deep: #3d44a0;
+  --tb-primary-glow: rgba(94, 106, 210, 0.08);
+  --tb-primary-soft: rgba(94, 106, 210, 0.10);
+  --tb-background: var(--tb-canvas);
+  --tb-foreground: var(--tb-ink);
+  --tb-card: var(--tb-surface);
+  --tb-card-foreground: var(--tb-ink);
+  --tb-popover: var(--tb-surface);
+  --tb-popover-foreground: var(--tb-ink);
+  --tb-muted: var(--tb-surface-elevated);
+  --tb-muted-foreground: var(--tb-mute);
+  --tb-border: var(--tb-hairline);
+  --tb-input: var(--tb-hairline);
+  --tb-ring: #5e6ad2;
+  --color-background: #fafafa;
+  --color-foreground: #18181b;
+  --color-card: #ffffff;
+  --color-card-foreground: #18181b;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #18181b;
+  --color-muted: #f4f4f5;
+  --color-muted-foreground: #71717a;
+  --color-border: #e4e4e7;
+  --color-input: #e4e4e7;
+}
+
+/* ---- Typography Classes ---- */
+.font-sans { font-family: var(--tb-font-sans); }
+.font-mono { font-family: var(--tb-font-mono); }
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Inter distinctive rendering */
+body {
+  font-family: var(--tb-font-sans);
+  font-feature-settings: "ss03", "cv01", "cv03", "cv04", "tnum";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
+}
+
+/* Heading tightening */
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+/* Code / data blocks */
+code, pre, .mono {
+  font-family: var(--tb-font-mono);
+  font-feature-settings: "tnum";
+}

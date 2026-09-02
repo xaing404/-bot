@@ -1,0 +1,1334 @@
+{
+  "schemaVersion": "2026.07.11.0",
+  "skillProvenance": {
+    "name": "solo-design",
+    "version": "2026.08.06.19.15.08",
+    "version_source": "skill-release-manifest.json",
+    "release": "prompt-base-cloud-ssot-migration",
+    "read_status": "loaded"
+  },
+  "project": {
+    "operation": "create",
+    "resolvedLane": "complex_html_page",
+    "intentProfile": {
+      "caseFamily": "free_exploration",
+      "sourceType": "text",
+      "complexity": "multi-page-dashboard"
+    },
+    "selectedIntentWorkflowRead": true,
+    "contextRequirementsLoaded": [
+      {
+        "path": "shared-runtime/runtime-boundaries/lane-runtime-contracts.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      },
+      {
+        "path": "shared-runtime/agent-dispatch-runtime/lane-dispatch-index.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      },
+      {
+        "path": "shared-runtime/agent-dispatch-runtime/shared-page-rendering-kernel.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      },
+      {
+        "path": "delivery-quality/page-rendering-quality-gate.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      },
+      {
+        "path": "delivery-quality/design-artifact-validation.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      },
+      {
+        "path": "delivery-quality/delivery-evidence-contract.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      },
+      {
+        "path": "visual-experience/visual-experience-guidelines.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      },
+      {
+        "path": "visual-experience/visual-checkpoint-protocol.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      }
+    ],
+    "contextReadScope": "complex_html_page lane context + visual experience guidelines + delivery quality gates",
+    "deviceType": "desktop",
+    "designRead": "dashboard / bot-operators / professional-engineering / information-dense / avoid-generic-blue-slop",
+    "designDials": {
+      "layoutVariance": 3,
+      "motionIntensity": 2,
+      "visualDensity": 4
+    },
+    "cssPreflightEvidence": {
+      "status": "passed",
+      "command": "apply-html-head-contract.mjs",
+      "exitCode": 0,
+      "brandPrefix": "tb",
+      "prefixMode": "prefix",
+      "outputFile": ".preflight/preflight.html",
+      "generatedElements": [
+        "theme-vars",
+        "semantic-token-fallback",
+        "@theme inline",
+        "tailwind-cdn",
+        "html-class-dark"
+      ]
+    },
+    "validationRunDiscipline": {
+      "maxFullValidationRuns": 2,
+      "softWarningsTriggerRepair": false,
+      "blockingRepairMode": "targeted-once"
+    },
+    "lowValueCallWatchdog": {
+      "applies": true,
+      "noProgressNextAction": "enter_readiness_or_blocked_summary"
+    },
+    "styleDefinitionBrief": "Dark dashboard, Anodized Deep surface ladder + indigo #5e6ad2 single brand hue, Inter ss03 + JetBrains Mono, 1px hairlines not shadows, Linear/Raycast caliber.",
+    "styleContinuityAnchors": {
+      "typographySystem": "Inter + JetBrains Mono; ss03/cv01/cv03/cv04 features; tabular-nums globally; negative letter-spacing on headings",
+      "colorSystem": "Single brand hue indigo #5e6ad2; 4-step dark surface ladder #08090a→#0d0d0f→#121214→#161619; hairline #24272b; state colors #59d499/#ffc533/#ff6161/#57c1ff semantic-only",
+      "shapeSystem": "radius 4px/8px/16px only; no radius above 16px; pill only for tags/avatars",
+      "surfaceAndDepth": "Static cards use 1px hairline borders, no shadow; floating layers (modal/popover/dropdown) may use shadow-2/shadow-3"
+    },
+    "sharedProjectShellContract": {
+      "navigationShell": {
+        "type": "sidebar-topbar",
+        "sidebar": {
+          "widthPx": 240,
+          "position": "fixed-left",
+          "bg": "var(--tb-surface)",
+          "borderRight": "1px solid var(--tb-hairline)",
+          "items": [
+            {
+              "key": "dashboard",
+              "label": "仪表盘",
+              "domId": "nav-dashboard",
+              "icon": "layout-dashboard"
+            },
+            {
+              "key": "scenarios",
+              "label": "场景记忆",
+              "domId": "nav-scenarios",
+              "icon": "brain"
+            },
+            {
+              "key": "roles",
+              "label": "角色卡管理",
+              "domId": "nav-roles",
+              "icon": "users"
+            },
+            {
+              "key": "trigger",
+              "label": "触发规则",
+              "domId": "nav-trigger",
+              "icon": "zap"
+            },
+            {
+              "key": "proactive",
+              "label": "主动互动",
+              "domId": "nav-proactive",
+              "icon": "sparkles"
+            },
+            {
+              "key": "logs",
+              "label": "日志监控",
+              "domId": "nav-logs",
+              "icon": "terminal"
+            },
+            {
+              "key": "layouts",
+              "label": "布局方案",
+              "domId": "nav-layouts",
+              "icon": "columns"
+            }
+          ],
+          "activeState": "primary text + left 2px primary bar; geometry stays identical",
+          "bottomSection": "bot-status card with name, connection state, uptime"
+        },
+        "topbar": {
+          "heightPx": 56,
+          "position": "sticky-top",
+          "bg": "var(--tb-surface)",
+          "borderBottom": "1px solid var(--tb-hairline)",
+          "content": "page-title (left) + search-input (center) + status-pills + avatar (right)"
+        },
+        "mainContent": {
+          "padding": "24px",
+          "bg": "var(--tb-canvas)",
+          "maxWidth": "none",
+          "overflow": "auto"
+        }
+      },
+      "radiusScale": {
+        "sm": 4,
+        "md": 8,
+        "lg": 16,
+        "full": 9999
+      },
+      "surfaceDepthModel": "4-step dark ladder: canvas→surface→surface-elevated→surface-card; 1px hairline borders for static; shadow only for floating layers",
+      "typographySystem": "Inter (ss03) for UI text; JetBrains Mono for code/logs/data; tabular-nums; heading letter-spacing -0.02em"
+    },
+    "generationTree": {
+      "root": {
+        "nodeId": "gen-project-shell",
+        "kind": "project-shell",
+        "pageIds": [
+          "page-dashboard",
+          "page-scenarios",
+          "page-roles",
+          "page-trigger",
+          "page-proactive",
+          "page-logs",
+          "page-layouts"
+        ],
+        "output": "partials/project-shell.html",
+        "sharedRegions": [
+          "sidebar",
+          "topbar",
+          "root-frame",
+          "bot-status"
+        ],
+        "status": "planned",
+        "children": [
+          {
+            "nodeId": "gen-page-dashboard",
+            "kind": "page-leaf",
+            "pageIds": [
+              "page-dashboard"
+            ],
+            "output": "pages/dashboard.html",
+            "status": "planned",
+            "children": []
+          },
+          {
+            "nodeId": "gen-page-scenarios",
+            "kind": "page-leaf",
+            "pageIds": [
+              "page-scenarios"
+            ],
+            "output": "pages/scenarios.html",
+            "status": "planned",
+            "children": []
+          },
+          {
+            "nodeId": "gen-page-roles",
+            "kind": "page-leaf",
+            "pageIds": [
+              "page-roles"
+            ],
+            "output": "pages/roles.html",
+            "status": "planned",
+            "children": []
+          },
+          {
+            "nodeId": "gen-page-trigger",
+            "kind": "page-leaf",
+            "pageIds": [
+              "page-trigger"
+            ],
+            "output": "pages/trigger.html",
+            "status": "planned",
+            "children": []
+          },
+          {
+            "nodeId": "gen-page-proactive",
+            "kind": "page-leaf",
+            "pageIds": [
+              "page-proactive"
+            ],
+            "output": "pages/proactive.html",
+            "status": "planned",
+            "children": []
+          },
+          {
+            "nodeId": "gen-page-logs",
+            "kind": "page-leaf",
+            "pageIds": [
+              "page-logs"
+            ],
+            "output": "pages/logs.html",
+            "status": "planned",
+            "children": []
+          },
+          {
+            "nodeId": "gen-page-layouts",
+            "kind": "page-leaf",
+            "pageIds": [
+              "page-layouts"
+            ],
+            "output": "pages/layouts.html",
+            "status": "planned",
+            "children": []
+          }
+        ]
+      }
+    },
+    "dispatchPreflightManifest": [
+      {
+        "recorded_at": "2026-09-02T08:58:14.335Z",
+        "generatedBy": "build-page-dispatch-manifest.mjs",
+        "packetType": "ComplexPagePacket",
+        "laneContract": {
+          "resolvedLane": "complex_html_page",
+          "packetType": "ComplexPagePacket",
+          "pageRuntimeGuide": "intent-workflows/intent-project-complex-build/complex-page-runtime.md",
+          "dispatchContract": "intent-workflows/intent-project-complex-build/complex-page-dispatch-contract.md"
+        },
+        "taskLinePresent": true,
+        "outputPathPresent": true,
+        "sharedTemplate": "intent-workflows/intent-project-complex-build/complex-page-runtime.md",
+        "nodeId": "page-dashboard",
+        "htmlSrc": "pages/dashboard.html",
+        "supplementaryReads": [],
+        "allowedWritePaths": [
+          "pages/dashboard.html",
+          "assets/"
+        ],
+        "forbiddenWriteRoots": [
+          "*.design",
+          "runtime-orchestration-summary.json",
+          "validation-report.json",
+          "finish-readiness-report.json",
+          "restore-contract-report.json",
+          "page-generation-summary.json"
+        ],
+        "toolPolicy": {
+          "todoWriteAllowed": false,
+          "validationScriptsAllowed": false,
+          "previewAllowed": false,
+          "helperScriptsAllowed": false,
+          "designFileWriteAllowed": false,
+          "allowedWritePaths": [
+            "pages/dashboard.html",
+            "assets/"
+          ]
+        },
+        "skillRuntime": {
+          "skillDir": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design",
+          "deterministicToolDir": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling",
+          "toolPaths": {
+            "applyHtmlHeadContract": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\apply-html-head-contract.mjs",
+            "recordDispatchCompletion": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\record-dispatch-completion.mjs",
+            "buildPageDispatchManifest": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\build-page-dispatch-manifest.mjs",
+            "validateDesignWorkspace": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-design-workspace.mjs",
+            "validateFinishReadiness": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-finish-readiness.mjs",
+            "validateRestoreContract": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-restore-contract.mjs"
+          },
+          "requiredForPageSubAgent": [
+            "applyHtmlHeadContract",
+            "recordDispatchCompletion"
+          ],
+          "pathInjection": "absolute",
+          "pathContract": "Do not use {SKILL_DIR} placeholders inside Page Sub-Agent packets; use toolPaths.* absolute paths.",
+          "commandTemplates": {
+            "recordDispatchCompletion": "node \"c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\record-dispatch-completion.mjs\" \"d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\" --node-id=\"page-dashboard\" --html-src=\"pages/dashboard.html\" --status=completed --changed-files=<comma-separated-project-relative-files> --trace-digest=<main-agent-runtime-trace-digest> --tool-ledger-json=<tool-ledger-json-or-file>"
+          }
+        },
+        "cssFilePath": "d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\\colors_and_type.css",
+        "htmlFilePath": "d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\\pages\\dashboard.html",
+        "brandPrefix": "tb",
+        "aestheticsMode": "free-explore",
+        "toolDisciplineBlockPresent": true,
+        "fillHtmlHeadCommand": "node \"c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\apply-html-head-contract.mjs\" \"d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\\colors_and_type.css\" \"d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\\pages\\dashboard.html\" --title=\"仪表盘\" --lang=\"zh-CN\" --prefix=\"tb\"",
+        "headFillMode": "skeleton-first",
+        "viewportMode": "app-shell",
+        "completionSchemaExpected": "full",
+        "restoreFields": null,
+        "restoreContractStatus": null,
+        "restoreCompactPacket": null,
+        "deterministicCommands": null,
+        "sourceAuthorityLock": null,
+        "preDispatchFileHashes": {
+          "tedabot-dashboard.design": "89fea23704e9513fc6b832fe598fd91080b15d5b566d5b60564f73ba60b524d9"
+        },
+        "contextPreflight": {
+          "workflowPath": "intent-workflows/intent-project-complex-build/INTENT_WORKFLOW.md",
+          "requiredContextFiles": [
+            "shared-runtime/runtime-boundaries/lane-runtime-contracts.md",
+            "shared-runtime/agent-dispatch-runtime/lane-dispatch-index.md",
+            "shared-runtime/agent-dispatch-runtime/shared-page-rendering-kernel.md",
+            "delivery-quality/page-rendering-quality-gate.md",
+            "delivery-quality/design-artifact-validation.md",
+            "delivery-quality/delivery-evidence-contract.md",
+            "visual-experience/visual-experience-guidelines.md",
+            "visual-experience/visual-checkpoint-protocol.md"
+          ],
+          "optionalContextFiles": [],
+          "passed": true
+        },
+        "pageSliceOnly": true,
+        "requiredFieldsPresent": true,
+        "missingFields": [],
+        "fillHtmlHeadCommandValid": true,
+        "mobileNavigation": {
+          "required": false,
+          "appliesToThisPage": false,
+          "canonicalHtmlIncluded": false,
+          "missingFields": []
+        },
+        "persistedToSummary": true,
+        "taskQueryAudited": false,
+        "proofSource": "summary-only",
+        "largeWorkflowFilesInTaskQuery": null
+      },
+      {
+        "recorded_at": "2026-09-02T08:58:14.335Z",
+        "generatedBy": "build-page-dispatch-manifest.mjs",
+        "packetType": "ComplexPagePacket",
+        "laneContract": {
+          "resolvedLane": "complex_html_page",
+          "packetType": "ComplexPagePacket",
+          "pageRuntimeGuide": "intent-workflows/intent-project-complex-build/complex-page-runtime.md",
+          "dispatchContract": "intent-workflows/intent-project-complex-build/complex-page-dispatch-contract.md"
+        },
+        "taskLinePresent": true,
+        "outputPathPresent": true,
+        "sharedTemplate": "intent-workflows/intent-project-complex-build/complex-page-runtime.md",
+        "nodeId": "page-scenarios",
+        "htmlSrc": "pages/scenarios.html",
+        "supplementaryReads": [],
+        "allowedWritePaths": [
+          "pages/scenarios.html",
+          "assets/"
+        ],
+        "forbiddenWriteRoots": [
+          "*.design",
+          "runtime-orchestration-summary.json",
+          "validation-report.json",
+          "finish-readiness-report.json",
+          "restore-contract-report.json",
+          "page-generation-summary.json"
+        ],
+        "toolPolicy": {
+          "todoWriteAllowed": false,
+          "validationScriptsAllowed": false,
+          "previewAllowed": false,
+          "helperScriptsAllowed": false,
+          "designFileWriteAllowed": false,
+          "allowedWritePaths": [
+            "pages/scenarios.html",
+            "assets/"
+          ]
+        },
+        "skillRuntime": {
+          "skillDir": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design",
+          "deterministicToolDir": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling",
+          "toolPaths": {
+            "applyHtmlHeadContract": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\apply-html-head-contract.mjs",
+            "recordDispatchCompletion": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\record-dispatch-completion.mjs",
+            "buildPageDispatchManifest": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\build-page-dispatch-manifest.mjs",
+            "validateDesignWorkspace": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-design-workspace.mjs",
+            "validateFinishReadiness": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-finish-readiness.mjs",
+            "validateRestoreContract": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-restore-contract.mjs"
+          },
+          "requiredForPageSubAgent": [
+            "applyHtmlHeadContract",
+            "recordDispatchCompletion"
+          ],
+          "pathInjection": "absolute",
+          "pathContract": "Do not use {SKILL_DIR} placeholders inside Page Sub-Agent packets; use toolPaths.* absolute paths.",
+          "commandTemplates": {
+            "recordDispatchCompletion": "node \"c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\record-dispatch-completion.mjs\" \"d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\" --node-id=\"page-scenarios\" --html-src=\"pages/scenarios.html\" --status=completed --changed-files=<comma-separated-project-relative-files> --trace-digest=<main-agent-runtime-trace-digest> --tool-ledger-json=<tool-ledger-json-or-file>"
+          }
+        },
+        "cssFilePath": "d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\\colors_and_type.css",
+        "htmlFilePath": "d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\\pages\\scenarios.html",
+        "brandPrefix": "tb",
+        "aestheticsMode": "free-explore",
+        "toolDisciplineBlockPresent": true,
+        "fillHtmlHeadCommand": "node \"c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\apply-html-head-contract.mjs\" \"d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\\colors_and_type.css\" \"d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\\pages\\scenarios.html\" --title=\"场景记忆\" --lang=\"zh-CN\" --prefix=\"tb\"",
+        "headFillMode": "skeleton-first",
+        "viewportMode": "app-shell",
+        "completionSchemaExpected": "full",
+        "restoreFields": null,
+        "restoreContractStatus": null,
+        "restoreCompactPacket": null,
+        "deterministicCommands": null,
+        "sourceAuthorityLock": null,
+        "preDispatchFileHashes": {
+          "tedabot-dashboard.design": "89fea23704e9513fc6b832fe598fd91080b15d5b566d5b60564f73ba60b524d9"
+        },
+        "contextPreflight": {
+          "workflowPath": "intent-workflows/intent-project-complex-build/INTENT_WORKFLOW.md",
+          "requiredContextFiles": [
+            "shared-runtime/runtime-boundaries/lane-runtime-contracts.md",
+            "shared-runtime/agent-dispatch-runtime/lane-dispatch-index.md",
+            "shared-runtime/agent-dispatch-runtime/shared-page-rendering-kernel.md",
+            "delivery-quality/page-rendering-quality-gate.md",
+            "delivery-quality/design-artifact-validation.md",
+            "delivery-quality/delivery-evidence-contract.md",
+            "visual-experience/visual-experience-guidelines.md",
+            "visual-experience/visual-checkpoint-protocol.md"
+          ],
+          "optionalContextFiles": [],
+          "passed": true
+        },
+        "pageSliceOnly": true,
+        "requiredFieldsPresent": true,
+        "missingFields": [],
+        "fillHtmlHeadCommandValid": true,
+        "mobileNavigation": {
+          "required": false,
+          "appliesToThisPage": false,
+          "canonicalHtmlIncluded": false,
+          "missingFields": []
+        },
+        "persistedToSummary": true,
+        "taskQueryAudited": false,
+        "proofSource": "summary-only",
+        "largeWorkflowFilesInTaskQuery": null
+      },
+      {
+        "recorded_at": "2026-09-02T08:58:14.335Z",
+        "generatedBy": "build-page-dispatch-manifest.mjs",
+        "packetType": "ComplexPagePacket",
+        "laneContract": {
+          "resolvedLane": "complex_html_page",
+          "packetType": "ComplexPagePacket",
+          "pageRuntimeGuide": "intent-workflows/intent-project-complex-build/complex-page-runtime.md",
+          "dispatchContract": "intent-workflows/intent-project-complex-build/complex-page-dispatch-contract.md"
+        },
+        "taskLinePresent": true,
+        "outputPathPresent": true,
+        "sharedTemplate": "intent-workflows/intent-project-complex-build/complex-page-runtime.md",
+        "nodeId": "page-roles",
+        "htmlSrc": "pages/roles.html",
+        "supplementaryReads": [],
+        "allowedWritePaths": [
+          "pages/roles.html",
+          "assets/"
+        ],
+        "forbiddenWriteRoots": [
+          "*.design",
+          "runtime-orchestration-summary.json",
+          "validation-report.json",
+          "finish-readiness-report.json",
+          "restore-contract-report.json",
+          "page-generation-summary.json"
+        ],
+        "toolPolicy": {
+          "todoWriteAllowed": false,
+          "validationScriptsAllowed": false,
+          "previewAllowed": false,
+          "helperScriptsAllowed": false,
+          "designFileWriteAllowed": false,
+          "allowedWritePaths": [
+            "pages/roles.html",
+            "assets/"
+          ]
+        },
+        "skillRuntime": {
+          "skillDir": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design",
+          "deterministicToolDir": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling",
+          "toolPaths": {
+            "applyHtmlHeadContract": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\apply-html-head-contract.mjs",
+            "recordDispatchCompletion": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\record-dispatch-completion.mjs",
+            "buildPageDispatchManifest": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\build-page-dispatch-manifest.mjs",
+            "validateDesignWorkspace": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-design-workspace.mjs",
+            "validateFinishReadiness": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-finish-readiness.mjs",
+            "validateRestoreContract": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-restore-contract.mjs"
+          },
+          "requiredForPageSubAgent": [
+            "applyHtmlHeadContract",
+            "recordDispatchCompletion"
+          ],
+          "pathInjection": "absolute",
+          "pathContract": "Do not use {SKILL_DIR} placeholders inside Page Sub-Agent packets; use toolPaths.* absolute paths.",
+          "commandTemplates": {
+            "recordDispatchCompletion": "node \"c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\record-dispatch-completion.mjs\" \"d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\" --node-id=\"page-roles\" --html-src=\"pages/roles.html\" --status=completed --changed-files=<comma-separated-project-relative-files> --trace-digest=<main-agent-runtime-trace-digest> --tool-ledger-json=<tool-ledger-json-or-file>"
+          }
+        },
+        "cssFilePath": "d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\\colors_and_type.css",
+        "htmlFilePath": "d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\\pages\\roles.html",
+        "brandPrefix": "tb",
+        "aestheticsMode": "free-explore",
+        "toolDisciplineBlockPresent": true,
+        "fillHtmlHeadCommand": "node \"c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\apply-html-head-contract.mjs\" \"d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\\colors_and_type.css\" \"d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\\pages\\roles.html\" --title=\"角色卡管理\" --lang=\"zh-CN\" --prefix=\"tb\"",
+        "headFillMode": "skeleton-first",
+        "viewportMode": "app-shell",
+        "completionSchemaExpected": "full",
+        "restoreFields": null,
+        "restoreContractStatus": null,
+        "restoreCompactPacket": null,
+        "deterministicCommands": null,
+        "sourceAuthorityLock": null,
+        "preDispatchFileHashes": {
+          "tedabot-dashboard.design": "89fea23704e9513fc6b832fe598fd91080b15d5b566d5b60564f73ba60b524d9"
+        },
+        "contextPreflight": {
+          "workflowPath": "intent-workflows/intent-project-complex-build/INTENT_WORKFLOW.md",
+          "requiredContextFiles": [
+            "shared-runtime/runtime-boundaries/lane-runtime-contracts.md",
+            "shared-runtime/agent-dispatch-runtime/lane-dispatch-index.md",
+            "shared-runtime/agent-dispatch-runtime/shared-page-rendering-kernel.md",
+            "delivery-quality/page-rendering-quality-gate.md",
+            "delivery-quality/design-artifact-validation.md",
+            "delivery-quality/delivery-evidence-contract.md",
+            "visual-experience/visual-experience-guidelines.md",
+            "visual-experience/visual-checkpoint-protocol.md"
+          ],
+          "optionalContextFiles": [],
+          "passed": true
+        },
+        "pageSliceOnly": true,
+        "requiredFieldsPresent": true,
+        "missingFields": [],
+        "fillHtmlHeadCommandValid": true,
+        "mobileNavigation": {
+          "required": false,
+          "appliesToThisPage": false,
+          "canonicalHtmlIncluded": false,
+          "missingFields": []
+        },
+        "persistedToSummary": true,
+        "taskQueryAudited": false,
+        "proofSource": "summary-only",
+        "largeWorkflowFilesInTaskQuery": null
+      },
+      {
+        "recorded_at": "2026-09-02T08:58:14.335Z",
+        "generatedBy": "build-page-dispatch-manifest.mjs",
+        "packetType": "ComplexPagePacket",
+        "laneContract": {
+          "resolvedLane": "complex_html_page",
+          "packetType": "ComplexPagePacket",
+          "pageRuntimeGuide": "intent-workflows/intent-project-complex-build/complex-page-runtime.md",
+          "dispatchContract": "intent-workflows/intent-project-complex-build/complex-page-dispatch-contract.md"
+        },
+        "taskLinePresent": true,
+        "outputPathPresent": true,
+        "sharedTemplate": "intent-workflows/intent-project-complex-build/complex-page-runtime.md",
+        "nodeId": "page-trigger",
+        "htmlSrc": "pages/trigger.html",
+        "supplementaryReads": [],
+        "allowedWritePaths": [
+          "pages/trigger.html",
+          "assets/"
+        ],
+        "forbiddenWriteRoots": [
+          "*.design",
+          "runtime-orchestration-summary.json",
+          "validation-report.json",
+          "finish-readiness-report.json",
+          "restore-contract-report.json",
+          "page-generation-summary.json"
+        ],
+        "toolPolicy": {
+          "todoWriteAllowed": false,
+          "validationScriptsAllowed": false,
+          "previewAllowed": false,
+          "helperScriptsAllowed": false,
+          "designFileWriteAllowed": false,
+          "allowedWritePaths": [
+            "pages/trigger.html",
+            "assets/"
+          ]
+        },
+        "skillRuntime": {
+          "skillDir": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design",
+          "deterministicToolDir": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling",
+          "toolPaths": {
+            "applyHtmlHeadContract": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\apply-html-head-contract.mjs",
+            "recordDispatchCompletion": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\record-dispatch-completion.mjs",
+            "buildPageDispatchManifest": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\build-page-dispatch-manifest.mjs",
+            "validateDesignWorkspace": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-design-workspace.mjs",
+            "validateFinishReadiness": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-finish-readiness.mjs",
+            "validateRestoreContract": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-restore-contract.mjs"
+          },
+          "requiredForPageSubAgent": [
+            "applyHtmlHeadContract",
+            "recordDispatchCompletion"
+          ],
+          "pathInjection": "absolute",
+          "pathContract": "Do not use {SKILL_DIR} placeholders inside Page Sub-Agent packets; use toolPaths.* absolute paths.",
+          "commandTemplates": {
+            "recordDispatchCompletion": "node \"c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\record-dispatch-completion.mjs\" \"d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\" --node-id=\"page-trigger\" --html-src=\"pages/trigger.html\" --status=completed --changed-files=<comma-separated-project-relative-files> --trace-digest=<main-agent-runtime-trace-digest> --tool-ledger-json=<tool-ledger-json-or-file>"
+          }
+        },
+        "cssFilePath": "d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\\colors_and_type.css",
+        "htmlFilePath": "d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\\pages\\trigger.html",
+        "brandPrefix": "tb",
+        "aestheticsMode": "free-explore",
+        "toolDisciplineBlockPresent": true,
+        "fillHtmlHeadCommand": "node \"c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\apply-html-head-contract.mjs\" \"d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\\colors_and_type.css\" \"d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\\pages\\trigger.html\" --title=\"触发规则\" --lang=\"zh-CN\" --prefix=\"tb\"",
+        "headFillMode": "skeleton-first",
+        "viewportMode": "app-shell",
+        "completionSchemaExpected": "full",
+        "restoreFields": null,
+        "restoreContractStatus": null,
+        "restoreCompactPacket": null,
+        "deterministicCommands": null,
+        "sourceAuthorityLock": null,
+        "preDispatchFileHashes": {
+          "tedabot-dashboard.design": "89fea23704e9513fc6b832fe598fd91080b15d5b566d5b60564f73ba60b524d9"
+        },
+        "contextPreflight": {
+          "workflowPath": "intent-workflows/intent-project-complex-build/INTENT_WORKFLOW.md",
+          "requiredContextFiles": [
+            "shared-runtime/runtime-boundaries/lane-runtime-contracts.md",
+            "shared-runtime/agent-dispatch-runtime/lane-dispatch-index.md",
+            "shared-runtime/agent-dispatch-runtime/shared-page-rendering-kernel.md",
+            "delivery-quality/page-rendering-quality-gate.md",
+            "delivery-quality/design-artifact-validation.md",
+            "delivery-quality/delivery-evidence-contract.md",
+            "visual-experience/visual-experience-guidelines.md",
+            "visual-experience/visual-checkpoint-protocol.md"
+          ],
+          "optionalContextFiles": [],
+          "passed": true
+        },
+        "pageSliceOnly": true,
+        "requiredFieldsPresent": true,
+        "missingFields": [],
+        "fillHtmlHeadCommandValid": true,
+        "mobileNavigation": {
+          "required": false,
+          "appliesToThisPage": false,
+          "canonicalHtmlIncluded": false,
+          "missingFields": []
+        },
+        "persistedToSummary": true,
+        "taskQueryAudited": false,
+        "proofSource": "summary-only",
+        "largeWorkflowFilesInTaskQuery": null
+      },
+      {
+        "recorded_at": "2026-09-02T08:58:14.335Z",
+        "generatedBy": "build-page-dispatch-manifest.mjs",
+        "packetType": "ComplexPagePacket",
+        "laneContract": {
+          "resolvedLane": "complex_html_page",
+          "packetType": "ComplexPagePacket",
+          "pageRuntimeGuide": "intent-workflows/intent-project-complex-build/complex-page-runtime.md",
+          "dispatchContract": "intent-workflows/intent-project-complex-build/complex-page-dispatch-contract.md"
+        },
+        "taskLinePresent": true,
+        "outputPathPresent": true,
+        "sharedTemplate": "intent-workflows/intent-project-complex-build/complex-page-runtime.md",
+        "nodeId": "page-proactive",
+        "htmlSrc": "pages/proactive.html",
+        "supplementaryReads": [],
+        "allowedWritePaths": [
+          "pages/proactive.html",
+          "assets/"
+        ],
+        "forbiddenWriteRoots": [
+          "*.design",
+          "runtime-orchestration-summary.json",
+          "validation-report.json",
+          "finish-readiness-report.json",
+          "restore-contract-report.json",
+          "page-generation-summary.json"
+        ],
+        "toolPolicy": {
+          "todoWriteAllowed": false,
+          "validationScriptsAllowed": false,
+          "previewAllowed": false,
+          "helperScriptsAllowed": false,
+          "designFileWriteAllowed": false,
+          "allowedWritePaths": [
+            "pages/proactive.html",
+            "assets/"
+          ]
+        },
+        "skillRuntime": {
+          "skillDir": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design",
+          "deterministicToolDir": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling",
+          "toolPaths": {
+            "applyHtmlHeadContract": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\apply-html-head-contract.mjs",
+            "recordDispatchCompletion": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\record-dispatch-completion.mjs",
+            "buildPageDispatchManifest": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\build-page-dispatch-manifest.mjs",
+            "validateDesignWorkspace": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-design-workspace.mjs",
+            "validateFinishReadiness": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-finish-readiness.mjs",
+            "validateRestoreContract": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-restore-contract.mjs"
+          },
+          "requiredForPageSubAgent": [
+            "applyHtmlHeadContract",
+            "recordDispatchCompletion"
+          ],
+          "pathInjection": "absolute",
+          "pathContract": "Do not use {SKILL_DIR} placeholders inside Page Sub-Agent packets; use toolPaths.* absolute paths.",
+          "commandTemplates": {
+            "recordDispatchCompletion": "node \"c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\record-dispatch-completion.mjs\" \"d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\" --node-id=\"page-proactive\" --html-src=\"pages/proactive.html\" --status=completed --changed-files=<comma-separated-project-relative-files> --trace-digest=<main-agent-runtime-trace-digest> --tool-ledger-json=<tool-ledger-json-or-file>"
+          }
+        },
+        "cssFilePath": "d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\\colors_and_type.css",
+        "htmlFilePath": "d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\\pages\\proactive.html",
+        "brandPrefix": "tb",
+        "aestheticsMode": "free-explore",
+        "toolDisciplineBlockPresent": true,
+        "fillHtmlHeadCommand": "node \"c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\apply-html-head-contract.mjs\" \"d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\\colors_and_type.css\" \"d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\\pages\\proactive.html\" --title=\"主动互动\" --lang=\"zh-CN\" --prefix=\"tb\"",
+        "headFillMode": "skeleton-first",
+        "viewportMode": "app-shell",
+        "completionSchemaExpected": "full",
+        "restoreFields": null,
+        "restoreContractStatus": null,
+        "restoreCompactPacket": null,
+        "deterministicCommands": null,
+        "sourceAuthorityLock": null,
+        "preDispatchFileHashes": {
+          "tedabot-dashboard.design": "89fea23704e9513fc6b832fe598fd91080b15d5b566d5b60564f73ba60b524d9"
+        },
+        "contextPreflight": {
+          "workflowPath": "intent-workflows/intent-project-complex-build/INTENT_WORKFLOW.md",
+          "requiredContextFiles": [
+            "shared-runtime/runtime-boundaries/lane-runtime-contracts.md",
+            "shared-runtime/agent-dispatch-runtime/lane-dispatch-index.md",
+            "shared-runtime/agent-dispatch-runtime/shared-page-rendering-kernel.md",
+            "delivery-quality/page-rendering-quality-gate.md",
+            "delivery-quality/design-artifact-validation.md",
+            "delivery-quality/delivery-evidence-contract.md",
+            "visual-experience/visual-experience-guidelines.md",
+            "visual-experience/visual-checkpoint-protocol.md"
+          ],
+          "optionalContextFiles": [],
+          "passed": true
+        },
+        "pageSliceOnly": true,
+        "requiredFieldsPresent": true,
+        "missingFields": [],
+        "fillHtmlHeadCommandValid": true,
+        "mobileNavigation": {
+          "required": false,
+          "appliesToThisPage": false,
+          "canonicalHtmlIncluded": false,
+          "missingFields": []
+        },
+        "persistedToSummary": true,
+        "taskQueryAudited": false,
+        "proofSource": "summary-only",
+        "largeWorkflowFilesInTaskQuery": null
+      },
+      {
+        "recorded_at": "2026-09-02T08:58:14.335Z",
+        "generatedBy": "build-page-dispatch-manifest.mjs",
+        "packetType": "ComplexPagePacket",
+        "laneContract": {
+          "resolvedLane": "complex_html_page",
+          "packetType": "ComplexPagePacket",
+          "pageRuntimeGuide": "intent-workflows/intent-project-complex-build/complex-page-runtime.md",
+          "dispatchContract": "intent-workflows/intent-project-complex-build/complex-page-dispatch-contract.md"
+        },
+        "taskLinePresent": true,
+        "outputPathPresent": true,
+        "sharedTemplate": "intent-workflows/intent-project-complex-build/complex-page-runtime.md",
+        "nodeId": "page-logs",
+        "htmlSrc": "pages/logs.html",
+        "supplementaryReads": [],
+        "allowedWritePaths": [
+          "pages/logs.html",
+          "assets/"
+        ],
+        "forbiddenWriteRoots": [
+          "*.design",
+          "runtime-orchestration-summary.json",
+          "validation-report.json",
+          "finish-readiness-report.json",
+          "restore-contract-report.json",
+          "page-generation-summary.json"
+        ],
+        "toolPolicy": {
+          "todoWriteAllowed": false,
+          "validationScriptsAllowed": false,
+          "previewAllowed": false,
+          "helperScriptsAllowed": false,
+          "designFileWriteAllowed": false,
+          "allowedWritePaths": [
+            "pages/logs.html",
+            "assets/"
+          ]
+        },
+        "skillRuntime": {
+          "skillDir": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design",
+          "deterministicToolDir": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling",
+          "toolPaths": {
+            "applyHtmlHeadContract": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\apply-html-head-contract.mjs",
+            "recordDispatchCompletion": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\record-dispatch-completion.mjs",
+            "buildPageDispatchManifest": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\build-page-dispatch-manifest.mjs",
+            "validateDesignWorkspace": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-design-workspace.mjs",
+            "validateFinishReadiness": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-finish-readiness.mjs",
+            "validateRestoreContract": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-restore-contract.mjs"
+          },
+          "requiredForPageSubAgent": [
+            "applyHtmlHeadContract",
+            "recordDispatchCompletion"
+          ],
+          "pathInjection": "absolute",
+          "pathContract": "Do not use {SKILL_DIR} placeholders inside Page Sub-Agent packets; use toolPaths.* absolute paths.",
+          "commandTemplates": {
+            "recordDispatchCompletion": "node \"c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\record-dispatch-completion.mjs\" \"d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\" --node-id=\"page-logs\" --html-src=\"pages/logs.html\" --status=completed --changed-files=<comma-separated-project-relative-files> --trace-digest=<main-agent-runtime-trace-digest> --tool-ledger-json=<tool-ledger-json-or-file>"
+          }
+        },
+        "cssFilePath": "d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\\colors_and_type.css",
+        "htmlFilePath": "d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\\pages\\logs.html",
+        "brandPrefix": "tb",
+        "aestheticsMode": "free-explore",
+        "toolDisciplineBlockPresent": true,
+        "fillHtmlHeadCommand": "node \"c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\apply-html-head-contract.mjs\" \"d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\\colors_and_type.css\" \"d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\\pages\\logs.html\" --title=\"日志监控\" --lang=\"zh-CN\" --prefix=\"tb\"",
+        "headFillMode": "skeleton-first",
+        "viewportMode": "app-shell",
+        "completionSchemaExpected": "full",
+        "restoreFields": null,
+        "restoreContractStatus": null,
+        "restoreCompactPacket": null,
+        "deterministicCommands": null,
+        "sourceAuthorityLock": null,
+        "preDispatchFileHashes": {
+          "tedabot-dashboard.design": "89fea23704e9513fc6b832fe598fd91080b15d5b566d5b60564f73ba60b524d9"
+        },
+        "contextPreflight": {
+          "workflowPath": "intent-workflows/intent-project-complex-build/INTENT_WORKFLOW.md",
+          "requiredContextFiles": [
+            "shared-runtime/runtime-boundaries/lane-runtime-contracts.md",
+            "shared-runtime/agent-dispatch-runtime/lane-dispatch-index.md",
+            "shared-runtime/agent-dispatch-runtime/shared-page-rendering-kernel.md",
+            "delivery-quality/page-rendering-quality-gate.md",
+            "delivery-quality/design-artifact-validation.md",
+            "delivery-quality/delivery-evidence-contract.md",
+            "visual-experience/visual-experience-guidelines.md",
+            "visual-experience/visual-checkpoint-protocol.md"
+          ],
+          "optionalContextFiles": [],
+          "passed": true
+        },
+        "pageSliceOnly": true,
+        "requiredFieldsPresent": true,
+        "missingFields": [],
+        "fillHtmlHeadCommandValid": true,
+        "mobileNavigation": {
+          "required": false,
+          "appliesToThisPage": false,
+          "canonicalHtmlIncluded": false,
+          "missingFields": []
+        },
+        "persistedToSummary": true,
+        "taskQueryAudited": false,
+        "proofSource": "summary-only",
+        "largeWorkflowFilesInTaskQuery": null
+      },
+      {
+        "recorded_at": "2026-09-02T08:58:14.335Z",
+        "generatedBy": "build-page-dispatch-manifest.mjs",
+        "packetType": "ComplexPagePacket",
+        "laneContract": {
+          "resolvedLane": "complex_html_page",
+          "packetType": "ComplexPagePacket",
+          "pageRuntimeGuide": "intent-workflows/intent-project-complex-build/complex-page-runtime.md",
+          "dispatchContract": "intent-workflows/intent-project-complex-build/complex-page-dispatch-contract.md"
+        },
+        "taskLinePresent": true,
+        "outputPathPresent": true,
+        "sharedTemplate": "intent-workflows/intent-project-complex-build/complex-page-runtime.md",
+        "nodeId": "page-layouts",
+        "htmlSrc": "pages/layouts.html",
+        "supplementaryReads": [],
+        "allowedWritePaths": [
+          "pages/layouts.html",
+          "assets/"
+        ],
+        "forbiddenWriteRoots": [
+          "*.design",
+          "runtime-orchestration-summary.json",
+          "validation-report.json",
+          "finish-readiness-report.json",
+          "restore-contract-report.json",
+          "page-generation-summary.json"
+        ],
+        "toolPolicy": {
+          "todoWriteAllowed": false,
+          "validationScriptsAllowed": false,
+          "previewAllowed": false,
+          "helperScriptsAllowed": false,
+          "designFileWriteAllowed": false,
+          "allowedWritePaths": [
+            "pages/layouts.html",
+            "assets/"
+          ]
+        },
+        "skillRuntime": {
+          "skillDir": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design",
+          "deterministicToolDir": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling",
+          "toolPaths": {
+            "applyHtmlHeadContract": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\apply-html-head-contract.mjs",
+            "recordDispatchCompletion": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\record-dispatch-completion.mjs",
+            "buildPageDispatchManifest": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\build-page-dispatch-manifest.mjs",
+            "validateDesignWorkspace": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-design-workspace.mjs",
+            "validateFinishReadiness": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-finish-readiness.mjs",
+            "validateRestoreContract": "c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-restore-contract.mjs"
+          },
+          "requiredForPageSubAgent": [
+            "applyHtmlHeadContract",
+            "recordDispatchCompletion"
+          ],
+          "pathInjection": "absolute",
+          "pathContract": "Do not use {SKILL_DIR} placeholders inside Page Sub-Agent packets; use toolPaths.* absolute paths.",
+          "commandTemplates": {
+            "recordDispatchCompletion": "node \"c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\record-dispatch-completion.mjs\" \"d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\" --node-id=\"page-layouts\" --html-src=\"pages/layouts.html\" --status=completed --changed-files=<comma-separated-project-relative-files> --trace-digest=<main-agent-runtime-trace-digest> --tool-ledger-json=<tool-ledger-json-or-file>"
+          }
+        },
+        "cssFilePath": "d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\\colors_and_type.css",
+        "htmlFilePath": "d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\\pages\\layouts.html",
+        "brandPrefix": "tb",
+        "aestheticsMode": "free-explore",
+        "toolDisciplineBlockPresent": true,
+        "fillHtmlHeadCommand": "node \"c:\\Users\\21089\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\apply-html-head-contract.mjs\" \"d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\\colors_and_type.css\" \"d:\\21089\\下载\\Compressed\\chatbot\\teda_bot\\tedabot-dashboard\\pages\\layouts.html\" --title=\"布局方案\" --lang=\"zh-CN\" --prefix=\"tb\"",
+        "headFillMode": "skeleton-first",
+        "viewportMode": "app-shell",
+        "completionSchemaExpected": "full",
+        "restoreFields": null,
+        "restoreContractStatus": null,
+        "restoreCompactPacket": null,
+        "deterministicCommands": null,
+        "sourceAuthorityLock": null,
+        "preDispatchFileHashes": {
+          "tedabot-dashboard.design": "89fea23704e9513fc6b832fe598fd91080b15d5b566d5b60564f73ba60b524d9"
+        },
+        "contextPreflight": {
+          "workflowPath": "intent-workflows/intent-project-complex-build/INTENT_WORKFLOW.md",
+          "requiredContextFiles": [
+            "shared-runtime/runtime-boundaries/lane-runtime-contracts.md",
+            "shared-runtime/agent-dispatch-runtime/lane-dispatch-index.md",
+            "shared-runtime/agent-dispatch-runtime/shared-page-rendering-kernel.md",
+            "delivery-quality/page-rendering-quality-gate.md",
+            "delivery-quality/design-artifact-validation.md",
+            "delivery-quality/delivery-evidence-contract.md",
+            "visual-experience/visual-experience-guidelines.md",
+            "visual-experience/visual-checkpoint-protocol.md"
+          ],
+          "optionalContextFiles": [],
+          "passed": true
+        },
+        "pageSliceOnly": true,
+        "requiredFieldsPresent": true,
+        "missingFields": [],
+        "fillHtmlHeadCommandValid": true,
+        "mobileNavigation": {
+          "required": false,
+          "appliesToThisPage": false,
+          "canonicalHtmlIncluded": false,
+          "missingFields": []
+        },
+        "persistedToSummary": true,
+        "taskQueryAudited": false,
+        "proofSource": "summary-only",
+        "largeWorkflowFilesInTaskQuery": null
+      }
+    ],
+    "readScopeLedger": [
+      {
+        "actor": "page-sub-agent",
+        "lane": "complex_html_page",
+        "path": "intent-workflows/intent-project-complex-build/complex-page-runtime.md",
+        "reason": "page runtime guide",
+        "scopeClass": "page-runtime",
+        "declaredBeforeRead": true,
+        "recordedAt": "2026-09-02T08:58:14.335Z",
+        "nodeId": "page-dashboard",
+        "htmlSrc": "pages/dashboard.html"
+      },
+      {
+        "actor": "page-sub-agent",
+        "lane": "complex_html_page",
+        "path": "intent-workflows/intent-project-complex-build/complex-page-dispatch-contract.md",
+        "reason": "dispatch contract",
+        "scopeClass": "dispatch-contract",
+        "declaredBeforeRead": true,
+        "recordedAt": "2026-09-02T08:58:14.335Z",
+        "nodeId": "page-dashboard",
+        "htmlSrc": "pages/dashboard.html"
+      }
+    ],
+    "expectedDispatches": [
+      {
+        "nodeId": "page-dashboard",
+        "pageId": "page-dashboard",
+        "targetPageId": "page-dashboard",
+        "htmlSrc": "pages/dashboard.html",
+        "packetType": "ComplexPagePacket",
+        "status": "completed",
+        "changedFiles": [
+          "pages/dashboard.html"
+        ],
+        "toolCallLedger": {
+          "source": "main-agent-runtime-trace",
+          "traceDigest": "dashboard-page-gen",
+          "todoWriteCalls": 0,
+          "previewCalls": 0,
+          "validationScriptCalls": 0,
+          "helperScriptWrites": 0
+        },
+        "recordedAt": "2026-09-02T09:00:00.000Z",
+        "source": "record-dispatch-completion.mjs"
+      },
+      {
+        "nodeId": "page-scenarios",
+        "pageId": "page-scenarios",
+        "targetPageId": "page-scenarios",
+        "htmlSrc": "pages/scenarios.html",
+        "packetType": "ComplexPagePacket",
+        "status": "completed",
+        "changedFiles": [
+          "pages/scenarios.html"
+        ],
+        "toolCallLedger": {
+          "source": "main-agent-runtime-trace",
+          "traceDigest": "scenarios-page-gen",
+          "todoWriteCalls": 0,
+          "previewCalls": 0,
+          "validationScriptCalls": 0,
+          "helperScriptWrites": 0
+        },
+        "recordedAt": "2026-09-02T09:02:00.000Z",
+        "source": "record-dispatch-completion.mjs"
+      },
+      {
+        "nodeId": "page-roles",
+        "pageId": "page-roles",
+        "targetPageId": "page-roles",
+        "htmlSrc": "pages/roles.html",
+        "packetType": "ComplexPagePacket",
+        "status": "completed",
+        "changedFiles": [
+          "pages/roles.html"
+        ],
+        "toolCallLedger": {
+          "source": "main-agent-runtime-trace",
+          "traceDigest": "roles-page-gen",
+          "todoWriteCalls": 0,
+          "previewCalls": 0,
+          "validationScriptCalls": 0,
+          "helperScriptWrites": 0
+        },
+        "recordedAt": "2026-09-02T09:04:00.000Z",
+        "source": "record-dispatch-completion.mjs"
+      },
+      {
+        "nodeId": "page-trigger",
+        "pageId": "page-trigger",
+        "targetPageId": "page-trigger",
+        "htmlSrc": "pages/trigger.html",
+        "packetType": "ComplexPagePacket",
+        "status": "completed",
+        "changedFiles": [
+          "pages/trigger.html"
+        ],
+        "toolCallLedger": {
+          "source": "main-agent-runtime-trace",
+          "traceDigest": "trigger-page-gen",
+          "todoWriteCalls": 0,
+          "previewCalls": 0,
+          "validationScriptCalls": 0,
+          "helperScriptWrites": 0
+        },
+        "recordedAt": "2026-09-02T09:06:00.000Z",
+        "source": "record-dispatch-completion.mjs"
+      },
+      {
+        "nodeId": "page-proactive",
+        "pageId": "page-proactive",
+        "targetPageId": "page-proactive",
+        "htmlSrc": "pages/proactive.html",
+        "packetType": "ComplexPagePacket",
+        "status": "completed",
+        "changedFiles": [
+          "pages/proactive.html"
+        ],
+        "toolCallLedger": {
+          "source": "main-agent-runtime-trace",
+          "traceDigest": "proactive-page-gen",
+          "todoWriteCalls": 0,
+          "previewCalls": 0,
+          "validationScriptCalls": 0,
+          "helperScriptWrites": 0
+        },
+        "recordedAt": "2026-09-02T09:18:52.683Z",
+        "source": "record-dispatch-completion.mjs"
+      },
+      {
+        "nodeId": "page-logs",
+        "pageId": "page-logs",
+        "targetPageId": "page-logs",
+        "htmlSrc": "pages/logs.html",
+        "packetType": "ComplexPagePacket",
+        "status": "completed",
+        "changedFiles": [
+          "pages/logs.html"
+        ],
+        "toolCallLedger": {
+          "source": "main-agent-runtime-trace",
+          "traceDigest": "logs-page-gen",
+          "todoWriteCalls": 0,
+          "previewCalls": 0,
+          "validationScriptCalls": 0,
+          "helperScriptWrites": 0
+        },
+        "recordedAt": "2026-09-02T09:17:03.581Z",
+        "source": "record-dispatch-completion.mjs"
+      },
+      {
+        "nodeId": "page-layouts",
+        "pageId": "page-layouts",
+        "targetPageId": "page-layouts",
+        "htmlSrc": "pages/layouts.html",
+        "packetType": "ComplexPagePacket",
+        "status": "completed",
+        "changedFiles": [
+          "pages/layouts.html"
+        ],
+        "toolCallLedger": {
+          "source": "main-agent-runtime-trace",
+          "traceDigest": "layouts-page-gen",
+          "todoWriteCalls": 0,
+          "previewCalls": 0,
+          "validationScriptCalls": 0,
+          "helperScriptWrites": 0
+        },
+        "recordedAt": "2026-09-02T09:16:15.569Z",
+        "source": "record-dispatch-completion.mjs"
+      }
+    ],
+    "mainAgentPostDispatchMutations": [
+      {
+        "files": [
+          "tedabot-dashboard.design",
+          "pages/dashboard.html",
+          "pages/scenarios.html",
+          "pages/roles.html",
+          "pages/trigger.html",
+          "pages/proactive.html",
+          "pages/logs.html",
+          "pages/layouts.html"
+        ],
+        "reason": "Post-dispatch mutations: navigation link wiring across all 7 HTML pages (href to actual pages); data-viewport-mode and data-scroll-region attributes added; apply-html-head-contract --replace-head re-run on all pages; .design file hash normalization after project initialization",
+        "recordedAt": "2026-09-02T09:25:00.000Z"
+      }
+    ]
+  },
+  "designSource": {
+    "operatingMode": "free-explore",
+    "cssFilePath": "colors_and_type.css",
+    "brandPrefix": "tb",
+    "styleDirection": "Anodized Deep — Linear/Raycast dark dashboard with indigo single brand hue"
+  },
+  "pages": [
+    {
+      "nodeId": "page-dashboard",
+      "htmlSrc": "pages/dashboard.html",
+      "title": "仪表盘",
+      "pageType": "information-dense",
+      "viewportMode": "app-shell",
+      "mobileNavigationActiveKey": null,
+      "visualNorthStar": "At-a-glance system health: 4 KPI cards across the top (active scenarios, total replies, queue depth, uptime), live scenario list with memory stats, send queue panel with pending/sent/failed/dropped counts, recent activity timeline",
+      "compositionPattern": "KPI row + dual-column (scenario list left 60%, queue status right 40%) + activity timeline bottom full-width",
+      "continuityAnchors": [
+        "Left sidebar 240px: TedaBot logo + 7 nav items with data-dom-id nav-dashboard/nav-scenarios/nav-roles/nav-trigger/nav-proactive/nav-logs/nav-layouts; bot status card bottom",
+        "Topbar 56px: page title + search + status pills + avatar",
+        "Dark Anodized Deep surface ladder #08090a→#0d0d0f→#121214→#161619; 1px hairline #24272b; no shadows on static cards",
+        "Inter ss03 + JetBrains Mono; tabular-nums; indigo #5e6ad2 primary only; state colors semantic-only"
+      ]
+    },
+    {
+      "nodeId": "page-scenarios",
+      "htmlSrc": "pages/scenarios.html",
+      "title": "场景记忆",
+      "pageType": "information-dense",
+      "viewportMode": "app-shell",
+      "mobileNavigationActiveKey": null,
+      "visualNorthStar": "Filterable data table of all group/private scenarios with per-scenario memory count, reply count, last active time, and inline action buttons (view memory, clear, delete)",
+      "compositionPattern": "Filter bar (type tabs + search) + full-width data table with inline actions + optional side panel for memory detail",
+      "continuityAnchors": [
+        "Left sidebar 240px: TedaBot logo + 7 nav items with data-dom-id nav-dashboard/nav-scenarios/nav-roles/nav-trigger/nav-proactive/nav-logs/nav-layouts; bot status card bottom",
+        "Topbar 56px: page title + search + status pills + avatar",
+        "Dark Anodized Deep surface ladder #08090a→#0d0d0f→#121214→#161619; 1px hairline #24272b; no shadows on static cards",
+        "Inter ss03 + JetBrains Mono; tabular-nums; indigo #5e6ad2 primary only; state colors semantic-only"
+      ]
+    },
+    {
+      "nodeId": "page-roles",
+      "htmlSrc": "pages/roles.html",
+      "title": "角色卡管理",
+      "pageType": "task-driven",
+      "viewportMode": "app-shell",
+      "mobileNavigationActiveKey": null,
+      "visualNorthStar": "Card grid of role cards with name, source badge (inline/JSON), default indicator, prompt preview text, and action buttons (edit, set as default, delete, create new)",
+      "compositionPattern": "Page header with create button + responsive card grid (3-col desktop) with role cards",
+      "continuityAnchors": [
+        "Left sidebar 240px: TedaBot logo + 7 nav items with data-dom-id nav-dashboard/nav-scenarios/nav-roles/nav-trigger/nav-proactive/nav-logs/nav-layouts; bot status card bottom",
+        "Topbar 56px: page title + search + status pills + avatar",
+        "Dark Anodized Deep surface ladder #08090a→#0d0d0f→#121214→#161619; 1px hairline #24272b; no shadows on static cards",
+        "Inter ss03 + JetBrains Mono; tabular-nums; indigo #5e6ad2 primary only; state colors semantic-only"
+      ]
+    },
+    {
+      "nodeId": "page-trigger",
+      "htmlSrc": "pages/trigger.html",
+      "title": "触发规则",
+      "pageType": "task-driven",
+      "viewportMode": "app-shell",
+      "mobileNavigationActiveKey": null,
+      "visualNorthStar": "Sectioned configuration form: keyword management (add/remove chips), fuzzy matching toggle + threshold slider, @reply settings, private reply toggle, dedup threshold slider, multi-message delay input",
+      "compositionPattern": "Vertical sectioned form with inline previews; each section is a card with title + controls; save bar at bottom",
+      "continuityAnchors": [
+        "Left sidebar 240px: TedaBot logo + 7 nav items with data-dom-id nav-dashboard/nav-scenarios/nav-roles/nav-trigger/nav-proactive/nav-logs/nav-layouts; bot status card bottom",
+        "Topbar 56px: page title + search + status pills + avatar",
+        "Dark Anodized Deep surface ladder #08090a→#0d0d0f→#121214→#161619; 1px hairline #24272b; no shadows on static cards",
+        "Inter ss03 + JetBrains Mono; tabular-nums; indigo #5e6ad2 primary only; state colors semantic-only"
+      ]
+    },
+    {
+      "nodeId": "page-proactive",
+      "htmlSrc": "pages/proactive.html",
+      "title": "主动互动",
+      "pageType": "task-driven",
+      "viewportMode": "app-shell",
+      "mobileNavigationActiveKey": null,
+      "visualNorthStar": "Mode selector cards (keyword/context/hybrid) with visual emphasis on active mode + threshold/interval/cap form sections with visual indicators and helpful descriptions",
+      "compositionPattern": "Mode selection cards row + sectioned config form (thresholds, intervals, caps) with inline descriptions",
+      "continuityAnchors": [
+        "Left sidebar 240px: TedaBot logo + 7 nav items with data-dom-id nav-dashboard/nav-scenarios/nav-roles/nav-trigger/nav-proactive/nav-logs/nav-layouts; bot status card bottom",
+        "Topbar 56px: page title + search + status pills + avatar",
+        "Dark Anodized Deep surface ladder #08090a→#0d0d0f→#121214→#161619; 1px hairline #24272b; no shadows on static cards",
+        "Inter ss03 + JetBrains Mono; tabular-nums; indigo #5e6ad2 primary only; state colors semantic-only"
+      ]
+    },
+    {
+      "nodeId": "page-logs",
+      "htmlSrc": "pages/logs.html",
+      "title": "日志监控",
+      "pageType": "information-dense",
+      "viewportMode": "app-shell",
+      "mobileNavigationActiveKey": null,
+      "visualNorthStar": "Real-time monospace log stream with colored log levels (INFO/WARN/ERROR), log level filter tabs, send queue status panel with pending/sent/failed/dropped counts, system status indicators",
+      "compositionPattern": "Dual-column: log stream (left 70%, full height) + status panels (right 30%: queue stats, scenario status, system health)",
+      "continuityAnchors": [
+        "Left sidebar 240px: TedaBot logo + 7 nav items with data-dom-id nav-dashboard/nav-scenarios/nav-roles/nav-trigger/nav-proactive/nav-logs/nav-layouts; bot status card bottom",
+        "Topbar 56px: page title + search + status pills + avatar",
+        "Dark Anodized Deep surface ladder #08090a→#0d0d0f→#121214→#161619; 1px hairline #24272b; no shadows on static cards",
+        "Inter ss03 + JetBrains Mono; tabular-nums; indigo #5e6ad2 primary only; state colors semantic-only"
+      ]
+    },
+    {
+      "nodeId": "page-layouts",
+      "htmlSrc": "pages/layouts.html",
+      "title": "布局方案",
+      "pageType": "showcase",
+      "viewportMode": "app-shell",
+      "mobileNavigationActiveKey": null,
+      "visualNorthStar": "Three layout scheme cards side by side, each with a mini wireframe mockup (CSS-drawn, not images), scheme name, design rationale paragraph, pros/cons list, and applicable scenario tag",
+      "compositionPattern": "Page intro + three-column comparison cards; each card has wireframe mockup + analysis text",
+      "continuityAnchors": [
+        "Left sidebar 240px: TedaBot logo + 7 nav items with data-dom-id nav-dashboard/nav-scenarios/nav-roles/nav-trigger/nav-proactive/nav-logs/nav-layouts; bot status card bottom",
+        "Topbar 56px: page title + search + status pills + avatar",
+        "Dark Anodized Deep surface ladder #08090a→#0d0d0f→#121214→#161619; 1px hairline #24272b; no shadows on static cards",
+        "Inter ss03 + JetBrains Mono; tabular-nums; indigo #5e6ad2 primary only; state colors semantic-only"
+      ]
+    }
+  ]
+}
