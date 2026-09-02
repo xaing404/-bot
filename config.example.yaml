@@ -13,6 +13,10 @@ ai:
   api_key: "sk-替换为你的KEY"
   model: "gpt-4o-mini"
   temperature: 0.8
+  # 思考模式防护：请求层携带多协议关闭参数 + 响应层清洗 <think> 标签与散文式思考
+  disable_thinking: true
+  # 思考内容二次提炼：命中思考内容时提炼出最终回答复用，而非作废重试
+  cot_refine: true
   # 每个会话保留的最大对话轮数（超出淘汰最旧的）
   max_context_rounds: 8
   # 上下文时间边界（秒）：更早的历史消息不再带入 AI，防止误关联陈旧对话

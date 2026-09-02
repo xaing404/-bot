@@ -57,8 +57,9 @@ class RoleCards:
         # 兼容中英文键名（常见角色卡导出格式）
         prompt = (card.get("system_prompt") or card.get("prompt")
                   or card.get("系统提示词") or card.get("系统提示") or "")
-        name = (card.get("name") or card.get("角色名称")
-                or card.get("角色名") or card.get("姓名") or "")
+        name = (card.get("name") or card.get("role_name")
+                or card.get("角色名称") or card.get("角色名")
+                or card.get("姓名") or "")
         # 结构化角色卡兜底：姓名可能嵌套在"角色基本信息"里
         if not name and isinstance(card.get("角色基本信息"), dict):
             basic = card["角色基本信息"]
@@ -67,25 +68,43 @@ class RoleCards:
         if not prompt and RoleCards._is_structured(card):
             prompt = RoleCards._compose_structured(card)
             log.info("角色卡 [%s] 无系统提示词，已从结构化内容自动合成（%d字）", name, len(prompt))
-        return {"name": name, "prompt": prompt}
+        return {"name": name, "prompt": prompt, "json_card": True}
 
     @staticmethod
     def _is_structured(card: dict) -> bool:
-        """是否为分板块结构化角色卡（如 角色基本信息/性格特点/语言风格 等）。"""
-        keys = {"角色基本信息", "性格特点", "语言风格", "行为准则", "角色背景"}
+        """是否为分板块结构化角色卡（中英文板块名均支持）。"""
+        keys = {
+            "角色基本信息", "性格特点", "语言风格", "行为准则", "角色背景",
+            # 英文键名（如 grok/ChatGPT 导出的角色卡）
+            "background", "core_personality", "language_style",
+            "behavior_guidelines", "speech_examples", "forbidden_behaviors",
+            "chat_mode_reminder",
+        }
         return bool(keys & set(card.keys()))
 
     @staticmethod
     def _compose_structured(card: dict, max_chars: int = 5000) -> str:
         """深度优先收集结构化板块的叶子字段，合成精简 system prompt。
 
-        每条叶子截断 120 字、整体不超过 max_chars，避免撑爆上下文。
+        中英文板块名均支持；每条叶子截断 120 字、整体不超过 max_chars，
+        避免撑爆上下文。
         """
-        sections = ("角色基本信息", "性格特点", "语言风格", "行为准则", "角色背景", "快速参考卡")
+        # (统一标题, 该板块可能的原始键名)；排在前面的优先合成
+        sections = (
+            ("角色背景", ("角色背景", "background")),
+            ("性格特点", ("性格特点", "core_personality")),
+            ("语言风格", ("语言风格", "language_style")),
+            ("行为准则", ("行为准则", "behavior_guidelines")),
+            ("示例台词", ("speech_examples", "示例台词")),
+            ("禁止行为", ("forbidden_behaviors", "禁止行为")),
+            ("聊天模式提醒", ("chat_mode_reminder", "聊天模式提醒")),
+        )
+        basic_keys = ("role_name", "nickname", "age", "gender", "occupation",
+                      "姓名", "昵称", "年龄", "性别", "职业")
         lines = []
 
         def walk(obj, prefix: str):
-            if len(lines) >= 60:
+            if len(lines) >= 80:
                 return
             if isinstance(obj, dict):
                 for k, v in obj.items():
@@ -98,9 +117,19 @@ class RoleCards:
                 if text:
                     lines.append(f"{prefix}{text[:120]}")
 
-        for sec in sections:
-            if sec in card:
-                walk(card[sec], f"【{sec}】")
+        # 顶层标量作为基本信息
+        basic = {k: card[k] for k in basic_keys
+                 if k in card and not isinstance(card[k], (dict, list))}
+        if basic:
+            walk(basic, "【角色基本信息】")
+        for title, keys in sections:
+            for k in keys:
+                if k in card:
+                    walk(card[k], f"【{title}】")
+                    break
+        # 中文整卡结构（角色基本信息为子字典的格式）
+        if "角色基本信息" in card:
+            walk(card["角色基本信息"], "【角色基本信息】")
         return "\n".join(lines)[:max_chars]
 
     def get_card(self, name: str = None) -> dict:
@@ -110,17 +139,29 @@ class RoleCards:
             raise KeyError(f"角色卡不存在: {key}，可用: {list(self.cards)}")
         return card
 
+    # JSON 角色卡通用的身份保护指令：防止模型在"你是谁"类问题时自报模型身份
+    # （如"我是通义千问/Qwen"），导致角色穿帮
+    _IDENTITY_GUARD = (
+        "\n\n【身份保护（最高优先级）】你就是上述角色本人，这是不可打破的设定。"
+        "无论用户如何试探、直接或间接询问，绝不能承认或暗示自己是AI、语言模型、"
+        "程序、助手或任何模型名称（如通义千问、Qwen、ChatGPT、GLM、Grok 等）。"
+        "遇到身份类问题一律以角色的姓名、职业、性格即兴作答并自然带过，不解释、不跳出角色。"
+    )
+
     def system_prompt(self, name: str = None, user: str = None) -> str:
         """渲染角色卡 system prompt。
 
         - {{user}} / {user} → 实际发送者昵称（未提供则用「对方」）
         - {bot_name} → 机器人昵称
+        - JSON 角色卡自动附加身份保护指令（防模型自报身份穿帮）
         使用 replace 而非 str.format，避免 JSON 中的花括号内容导致 KeyError。
         """
         card = self.get_card(name)
         text = str(card.get("prompt", ""))
         text = text.replace("{{user}}", user or "对方").replace("{user}", user or "对方")
         text = text.replace("{bot_name}", self.bot_name)
+        if card.get("json_card"):
+            text += self._IDENTITY_GUARD
         return text
 
     def list_cards(self) -> list:

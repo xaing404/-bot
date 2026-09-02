@@ -183,6 +183,8 @@ class AIBackend:
         self.timeout = float(cfg.get("timeout") or 30)
         # 是否禁用思考模式（默认禁用，防止 CoT 内容被当成回复发出）
         self.disable_thinking = bool(cfg.get("disable_thinking", True))
+        # 思考内容二次提炼：检测到思考内容时不直接作废，而是提炼出最终回答复用（默认开）
+        self.cot_refine = bool(cfg.get("cot_refine", True))
         self.client = OpenAI(
             api_key=cfg.get("api_key", ""),
             base_url=cfg.get("base_url", "https://api.openai.com/v1"),
@@ -208,6 +210,44 @@ class AIBackend:
             "reasoning_effort": "none",             # OpenAI o/gpt-5 系列（旧版用 minimal）
             "reasoning": {"exclude": True},         # OpenRouter
         }
+
+    _REFINE_SYSTEM = (
+        "你是一个回复提炼器。用户发来的内容是一段 AI 模型的原始输出，其中混入了模型的"
+        "内心思考过程（如分析用户意图、讨论角色设定、检查规则等），且思考内容没有用任何"
+        "标签包裹。请从中提炼出模型真正想发送给用户的最终回复："
+        "1) 删除所有思考分析过程；"
+        "2) 仅保留适合直接发给用户的回答内容，若原文只有思考没有成型的回答，请依据思考中"
+        "   的结论补全一条简短自然的回复；"
+        "3) 保持原文的语言、人设、语气与核心信息，不引入新的事实；"
+        "4) 只输出最终回复本身，不要任何解释、前后缀或标签。"
+    )
+
+    def _refine_content(self, task_id: str, content: str) -> str | None:
+        """对检测到的思考内容做二次提炼，成功返回可发送的最终回复，失败返回 None。
+
+        提炼请求自身也走 auto 随机路由，可能命中思考源，故最多尝试 2 次。
+        """
+        for attempt in range(2):
+            try:
+                resp = self.client.chat.completions.create(
+                    model=self.model,
+                    messages=[
+                        {"role": "system", "content": self._REFINE_SYSTEM},
+                        {"role": "user", "content": content},
+                    ],
+                    temperature=0.3,  # 提炼任务要求稳定，低温
+                    extra_body=self._build_extra_body() or None,
+                )
+                refined = strip_thinking(resp.choices[0].message.content or "")
+                if refined and not looks_like_cot(refined):
+                    log_task(log, task_id, "思考内容已提炼复用（%d字 → %d字）",
+                             len(content), len(refined))
+                    return refined
+                log_task(log, task_id, "提炼第%d次输出仍含思考，%s",
+                         attempt + 1, "重试" if attempt == 0 else "放弃提炼转重试")
+            except Exception as e:
+                log_task(log, task_id, "提炼请求异常: %s", e)
+        return None
 
     def chat(self, system_prompt: str, history: list, user_msg: str) -> str:
         """调用 AI 生成回复。失败按指数退避重试，重试耗尽抛出 AIBackendError。"""
@@ -240,7 +280,13 @@ class AIBackend:
                     raise ValueError("empty after thinking-strip")
                 if cleaned and looks_like_cot(cleaned):
                     # auto 路由可能命中带思考模式的源，输出无标签纯文本 CoT；
-                    # 视为失败触发重试，确保思考内容绝不发出
+                    # 先尝试二次提炼复用其中的最终回答，提炼失败才作废重试
+                    if self.cot_refine:
+                        refined = self._refine_content(task_id, cleaned)
+                        if refined:
+                            log_success(log, "[任务%s] 模型生成完成(提炼复用) | 耗时%.1fs | 输出%d字",
+                                        task_id, time.monotonic() - start_ts, len(refined))
+                            return refined
                     log_task(log, task_id, "检测到思考内容，第%d次尝试作废并重试", attempt + 1)
                     raise ValueError("prose thinking detected")
                 log_success(log, "[任务%s] 模型生成完成 | 耗时%.1fs | 输出%d字",
