@@ -87,7 +87,7 @@ class DashboardServer:
         def _page(page_name):
             if page_name not in (
                 "dashboard", "scenarios", "roles", "trigger",
-                "proactive", "logs", "layouts",
+                "proactive", "logs", "layouts", "chat",
             ):
                 abort(404)
             return send_from_directory(_PAGES_DIR, f"{page_name}.html")
@@ -123,6 +123,20 @@ class DashboardServer:
         @app.route("/api/health")
         def _api_health():
             return jsonify(self._build_health())
+
+        # ---------- AI 聊天模块（可选挂载，失败不影响主 Dashboard） ----------
+        try:
+            from .chat_api import ChatService, create_chat_blueprint
+            handler = self._state.get("handler")
+            chat_service = ChatService(
+                self._cfg,
+                roles=handler.roles if handler else None,
+                ai=handler.ai if handler else None,
+            )
+            app.register_blueprint(create_chat_blueprint(chat_service))
+            app.extensions["chat_service"] = chat_service
+        except Exception as e:
+            log.error("AI 聊天模块加载失败（聊天功能不可用）: %s", e)
 
         return app
 

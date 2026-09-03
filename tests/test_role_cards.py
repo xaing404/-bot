@@ -29,7 +29,9 @@ def test_json_direct_prompt_field(tmp_path):
     card_file = tmp_path / "card2.json"
     card_file.write_text(json.dumps({"name": "小象", "prompt": "你是{bot_name}"}, ensure_ascii=False), encoding="utf-8")
     roles = RoleCards({"default": "x", "cards": {"x": str(card_file)}}, bot_name="xiang")
-    assert roles.system_prompt() == "你是xiang"
+    prompt = roles.system_prompt()
+    assert prompt.startswith("你是xiang")
+    assert "身份保护" in prompt  # JSON 角色卡自动追加最高优先级身份保护指令
 
 
 def test_json_braces_no_error(tmp_path):
@@ -37,7 +39,9 @@ def test_json_braces_no_error(tmp_path):
     card_file = tmp_path / "card3.json"
     card_file.write_text(json.dumps({"role_card": {"name": "X", "system_prompt": "规则{1}与{{user}}与{bot_name}"}}, ensure_ascii=False), encoding="utf-8")
     roles = RoleCards({"default": "z", "cards": {"z": {"file": str(card_file)}}}, bot_name="B")
-    assert roles.system_prompt(user="李四") == "规则{1}与李四与B"
+    prompt = roles.system_prompt(user="李四")
+    assert prompt.startswith("规则{1}与李四与B")
+    assert "身份保护" in prompt  # JSON 角色卡自动追加身份保护指令
 
 
 def test_missing_card_raises():
