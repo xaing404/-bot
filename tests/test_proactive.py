@@ -157,6 +157,53 @@ class TestSilenceTrigger:
         assert engine.should_speak("群B") is None  # B 群计时未到
 
 
+class TestBusyScene:
+    """场景忙碌（有消息正在处理/回复生成中）时主动发言必须让路，
+    防止"先发无@主动发言、紧跟带@回复"的同内容重复发送。"""
+
+    def test_busy_suppresses_trigger(self):
+        engine, handler = make_engine(make_cfg(message_threshold=1))
+        feed(engine, 1)
+        key = "group:测试群"
+        handler.mark_busy(key)
+        assert engine.should_speak("测试群") is None
+        handler.clear_busy(key)
+        assert engine.should_speak("测试群") == "消息阈值"
+
+    def test_busy_independent_per_chat(self):
+        engine, handler = make_engine(make_cfg(message_threshold=1))
+        feed(engine, 1, chat="群A")
+        feed(engine, 1, chat="群B")
+        handler.mark_busy("group:群A")
+        assert engine.should_speak("群A") is None
+        assert engine.should_speak("群B") == "消息阈值"
+
+
+class TestQuietAfterReply:
+    """场景刚发过任意回复（@回复/普通回复/主动发言）后，主动发言须沉默
+    min_interval 秒，防止基于同一上下文再次作答造成重复刷屏。"""
+
+    def test_suppressed_within_min_interval(self):
+        engine, _ = make_engine(make_cfg(message_threshold=1, min_interval=60))
+        feed(engine, 1)
+        # 模拟该群刚发过一次回复（handler 的 @回复也会 mark 场景冷却）
+        engine.throttle.mark("group:测试群")
+        assert engine.should_speak("测试群") is None
+
+    def test_allowed_after_min_interval(self):
+        engine, _ = make_engine(make_cfg(message_threshold=1, min_interval=0.05))
+        feed(engine, 1)
+        engine.throttle.mark("group:测试群")
+        time.sleep(0.1)  # 超过 min_interval 后恢复主动发言资格
+        assert engine.should_speak("测试群") == "消息阈值"
+
+    def test_no_reply_history_not_blocked(self):
+        # 场景从未回复过时，不受该规则影响
+        engine, _ = make_engine(make_cfg(message_threshold=1, min_interval=60))
+        feed(engine, 1)
+        assert engine.should_speak("测试群") == "消息阈值"
+
+
 class TestCaps:
     def test_daily_cap(self):
         engine, _ = make_engine(make_cfg(daily_cap=1, message_threshold=1))

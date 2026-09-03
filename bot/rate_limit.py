@@ -45,3 +45,9 @@ class ScenarioThrottle:
         """记录该场景刚刚发出了一次回复。"""
         with self._lock:
             self._last[scenario_key] = time.monotonic()
+
+    def seconds_since(self, scenario_key: str) -> float | None:
+        """距该场景上次回复的秒数；该场景从未回复过返回 None。"""
+        with self._lock:
+            last = self._last.get(scenario_key)
+            return None if last is None else time.monotonic() - last

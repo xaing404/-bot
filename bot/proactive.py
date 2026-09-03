@@ -92,11 +92,22 @@ class ProactiveEngine:
     # ---------- 触发判定 ----------
 
     def should_speak(self, chat_name: str) -> str | None:
-        """返回触发原因（"消息阈值"/"活跃度"）；不触发返回 None。"""
+        """返回触发原因（"消息阈值"/"活跃度"/"群静默"）；不触发返回 None。"""
         if not self.enabled or chat_name in self._pending:
+            return None
+        # 场景忙碌（有消息正在处理/回复正在生成）则不主动发言：
+        # 否则会对刚发言的成员触发"群静默"，生成出与@回复雷同的内容，
+        # 造成"先发无@消息、紧跟带@重复消息"的刷屏
+        if self.handler.is_busy(f"group:{chat_name}"):
             return None
         # 场景级防刷屏：距该群上次回复（含@回复）不足最小间隔则不主动发言
         if not self.throttle.allow(f"group:{chat_name}"):
+            return None
+        # 距该群任意回复（@回复/普通回复/主动发言）不足 min_interval 时不主动发言：
+        # 刚回复完就"群静默"冒泡，会基于同一上下文再次作答/复述刚才的话题，
+        # 造成"带@回复发一次、不带@主动发言再发一次"的重复刷屏
+        since = self.throttle.seconds_since(f"group:{chat_name}")
+        if since is not None and since < self.min_interval:
             return None
         st = self._state(chat_name)
         now = time.time()

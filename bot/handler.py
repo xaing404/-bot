@@ -57,6 +57,10 @@ class MessageHandler:
         )
         # 每个场景最近发出的回复（用于重复发送检测）
         self._recent_replies: dict = {}
+        # 每个场景忙碌标记：消息到达即标记、回复入队后清除，
+        # 供主动发言引擎判断（场景正在生成回复时不再主动冒泡，防止同内容重复发送）
+        self._busy: set = set()
+        self._busy_lock = threading.Lock()
         # 每个场景一把锁：同场景消息串行处理（保证回复与记忆一致），跨场景并发不受影响
         self._scene_locks: dict = {}
         self._locks_guard = threading.Lock()
@@ -68,6 +72,23 @@ class MessageHandler:
             if key not in self._scene_locks:
                 self._scene_locks[key] = threading.Lock()
             return self._scene_locks[key]
+
+    # ---------- 场景忙碌标记 ----------
+
+    def mark_busy(self, key: str):
+        """标记场景忙碌（消息到达时调用，在主循环同步执行避免竞态）。"""
+        with self._busy_lock:
+            self._busy.add(key)
+
+    def clear_busy(self, key: str):
+        """清除场景忙碌标记（回复已入队或处理完毕时调用）。"""
+        with self._busy_lock:
+            self._busy.discard(key)
+
+    def is_busy(self, key: str) -> bool:
+        """场景是否有消息正在处理/回复正在生成。"""
+        with self._busy_lock:
+            return key in self._busy
 
     def should_reply(self, msg) -> bool:
         """触发判定：关键词命中 / 被@ / 私聊，满足任一即回复。"""

@@ -8,7 +8,7 @@ from concurrent.futures import ThreadPoolExecutor
 import yaml
 
 from bot.ai_backend import ContextManager
-from bot.handler import MessageHandler
+from bot.handler import MessageHandler, scenario_key
 from bot.logger import setup_logging
 from bot.send_queue import SendQueue, PRIORITY_AT, PRIORITY_NORMAL, PRIORITY_PROACTIVE
 from bot.wechat_client import WeChatClient
@@ -86,7 +86,14 @@ def run_once(cfg: dict, log):
             while True:
                 loop_start = time.monotonic()
                 for msg in client.poll():
-                    pool.submit(_process, handler, client, engine, send_queue, msg)
+                    # 同步执行（必须在提交线程池前）：
+                    # 1) observe 立即重置群静默计时，防止主循环下一轮误判"群静默"
+                    #    而对刚有成员发言的群触发主动发言（与@回复同内容重复发送）
+                    # 2) 立即标记场景忙碌，主动发言引擎据此跳过正在处理的场景
+                    engine.observe(msg)
+                    key = scenario_key(msg)
+                    handler.mark_busy(key)
+                    pool.submit(_process, handler, client, engine, send_queue, msg, key)
                 # 检查各群是否满足主动发言条件
                 for chat in client.group_whitelist:
                     reason = engine.should_speak(chat)
@@ -134,10 +141,13 @@ def _log_status(handler: MessageHandler, contexts, log, send_queue: SendQueue = 
         log.info("[状态监控] 暂无活跃场景（已记录 %d 个场景）", len(stats))
 
 
-def _process(handler: MessageHandler, client: WeChatClient, engine, send_queue: SendQueue, msg):
-    """在线程池中执行：积累上下文 + AI 生成回复并入发送队列（不阻塞消息轮询）。"""
+def _process(handler: MessageHandler, client: WeChatClient, engine, send_queue: SendQueue,
+             msg, key: str = ""):
+    """在线程池中执行：AI 生成回复并入发送队列（不阻塞消息轮询）。
+
+    observe 已在主循环同步完成；处理完毕（回复入队或无需回复）后清除忙碌标记。
+    """
     try:
-        engine.observe(msg)
         reply = handler.handle(msg)
         if reply:
             # 被@的回复最高优先级，普通回复次之；队列保证按序串行发送
@@ -146,6 +156,9 @@ def _process(handler: MessageHandler, client: WeChatClient, engine, send_queue: 
     except Exception:
         import logging
         logging.getLogger("teda_bot").exception("处理消息时发生未预期异常")
+    finally:
+        if key:
+            handler.clear_busy(key)
 
 
 def _proactive_speak(engine, send_queue: SendQueue, handler, chat: str, reason: str):
