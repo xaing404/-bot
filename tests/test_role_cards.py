@@ -93,6 +93,25 @@ def test_real_xiaotang_card_loads():
     assert "张三" in prompt
 
 
+def test_real_wumuxing_card_loads():
+    """英文键名结构化卡（吴木鑫）：应自动合成 prompt 且板块齐全。"""
+    if not os.path.exists("wumuxing.json"):
+        return
+    roles = RoleCards({"default": "w", "cards": {"w": {"file": "wumuxing.json"}}},
+                      bot_name="xiang")
+    card = roles.get_card()
+    assert card["name"] == "吴木鑫"
+    assert len(card["prompt"]) > 500  # 结构化板块已自动合成
+    prompt = roles.system_prompt(user="张三")
+    # 核心板块均进入合成结果
+    for tag in ("角色基本信息", "角色背景", "性格特点", "语言风格",
+                "行为准则", "示例台词", "聊天模式提醒", "身份保护"):
+        assert tag in prompt
+    assert "地铁" in prompt            # 标志性人设内容保留
+    assert "511宿舍" in prompt
+    assert "身份保护（最高优先级）" in prompt
+
+
 def test_structured_card_without_prompt(tmp_path):
     """无系统提示词的结构化卡应自动合成 prompt（兜底能力）。"""
     card_file = tmp_path / "structured.json"

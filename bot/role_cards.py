@@ -78,7 +78,8 @@ class RoleCards:
             # 英文键名（如 grok/ChatGPT 导出的角色卡）
             "background", "core_personality", "language_style",
             "behavior_guidelines", "speech_examples", "forbidden_behaviors",
-            "chat_mode_reminder",
+            "chat_mode_reminder", "core_traits", "personality_summary",
+            "behavior_rules", "sample_dialogue", "chat_guidelines",
         }
         return bool(keys & set(card.keys()))
 
@@ -92,15 +93,20 @@ class RoleCards:
         # (统一标题, 该板块可能的原始键名)；排在前面的优先合成
         sections = (
             ("角色背景", ("角色背景", "background")),
-            ("性格特点", ("性格特点", "core_personality")),
+            ("性格特点", ("性格特点", "core_personality", "core_traits",
+                          "personality_summary")),
             ("语言风格", ("语言风格", "language_style")),
-            ("行为准则", ("行为准则", "behavior_guidelines")),
-            ("示例台词", ("speech_examples", "示例台词")),
+            ("行为准则", ("行为准则", "behavior_guidelines", "behavior_rules")),
+            ("示例台词", ("speech_examples", "sample_dialogue", "示例台词")),
             ("禁止行为", ("forbidden_behaviors", "禁止行为")),
-            ("聊天模式提醒", ("chat_mode_reminder", "聊天模式提醒")),
+            ("聊天模式提醒", ("chat_mode_reminder", "聊天模式提醒",
+                              "chat_guidelines")),
         )
-        basic_keys = ("role_name", "nickname", "age", "gender", "occupation",
-                      "姓名", "昵称", "年龄", "性别", "职业")
+        basic_keys = ("role_name", "name", "nickname", "age", "gender",
+                      "occupation", "species", "orientation", "school",
+                      "major", "dormitory", "relationship",
+                      "姓名", "昵称", "年龄", "性别", "职业", "种族",
+                      "学校", "专业", "宿舍", "关系")
         lines = []
 
         def walk(obj, prefix: str):
@@ -123,10 +129,10 @@ class RoleCards:
         if basic:
             walk(basic, "【角色基本信息】")
         for title, keys in sections:
-            for k in keys:
-                if k in card:
+            matched = [k for k in keys if k in card]
+            if matched:
+                for k in matched:
                     walk(card[k], f"【{title}】")
-                    break
         # 中文整卡结构（角色基本信息为子字典的格式）
         if "角色基本信息" in card:
             walk(card["角色基本信息"], "【角色基本信息】")
